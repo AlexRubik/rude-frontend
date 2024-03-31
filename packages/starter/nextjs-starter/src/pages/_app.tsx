@@ -1,52 +1,113 @@
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+import { ConnectionProvider, WalletProvider, useWallet } from '@solana/wallet-adapter-react';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
-import { UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
+import { LedgerWalletAdapter, PhantomWalletAdapter, SolflareWalletAdapter, TorusWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
 import type { AppProps } from 'next/app';
-import type { FC } from 'react';
-import React, { useMemo } from 'react';
+import type { FC, ReactNode } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import {UserContext} from '../UserContext';
+import dynamic from 'next/dynamic';
 
 // Use require instead of import since order matters
 require('@solana/wallet-adapter-react-ui/styles.css');
 require('../styles/globals.css');
 
-const App: FC<AppProps> = ({ Component, pageProps }) => {
-    // Can be set to 'devnet', 'testnet', or 'mainnet-beta'
-    const network = WalletAdapterNetwork.Devnet;
 
-    // You can also provide a custom RPC endpoint
+
+const Context: FC<{ children: ReactNode }> = ({ children }) => {
+    // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
+    const network = WalletAdapterNetwork.Mainnet;
+
+    // You can also provide a custom RPC endpoint.
+    //clusterApiUrl(network)
     const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
+    // @solana/wallet-adapter-wallets includes all the adapters but supports tree shaking and lazy loading --
+    // Only the wallets you configure here will be compiled into your application, and only the dependencies
+    // of wallets that your users connect to will be loaded.
     const wallets = useMemo(
         () => [
-            /**
-             * Wallets that implement either of these standards will be available automatically.
-             *
-             *   - Solana Mobile Stack Mobile Wallet Adapter Protocol
-             *     (https://github.com/solana-mobile/mobile-wallet-adapter)
-             *   - Solana Wallet Standard
-             *     (https://github.com/solana-labs/wallet-standard)
-             *
-             * If you wish to support a wallet that supports neither of those standards,
-             * instantiate its legacy wallet adapter here. Common legacy adapters can be found
-             * in the npm package `@solana/wallet-adapter-wallets`.
-             */
-            new UnsafeBurnerWalletAdapter(),
+            new PhantomWalletAdapter(),
+            new SolflareWalletAdapter({ network }),
+            new TorusWalletAdapter(),
+            new LedgerWalletAdapter(),
+            new SolflareWalletAdapter({ network }),
         ],
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         [network]
     );
 
+
     return (
-        <ConnectionProvider endpoint={endpoint}>
-            <WalletProvider wallets={wallets} autoConnect>
-                <WalletModalProvider>
-                    <Component {...pageProps} />
-                </WalletModalProvider>
-            </WalletProvider>
-        </ConnectionProvider>
+            <ConnectionProvider endpoint={endpoint}>
+                <WalletProvider wallets={wallets} autoConnect>
+                    <WalletModalProvider>
+                        {children}
+                    </WalletModalProvider>
+                </WalletProvider>
+            </ConnectionProvider>
     );
+};
+
+const App: FC<{ Component: FC<any>; pageProps: any }> = ({ Component, pageProps }) => {
+    const WalletMultiButtonDynamic = dynamic(
+        async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
+        { ssr: false }
+    );
+    return (
+        <>
+
+        <Context>
+        <div style={{ position: 'fixed', top: 0, right: 0, zIndex: 1, margin: 12 }}>
+        <WalletMultiButtonDynamic />
+        </div>
+            <Content Component={Component} pageProps={pageProps} />
+        </Context>
+
+        </>
+
+    );
+};
+
+const Content: FC<{ Component: FC<any>; pageProps: any }> = ({ Component, pageProps }) => {
+
+    const { publicKey } = useWallet();
+
+
+
+    useEffect(() => {
+
+        (async() => {
+
+            try {
+        
+console.log("publicKey", publicKey)
+                
+            } catch (error) {
+        
+                console.log(error)
+                
+            }
+        
+        
+        })();
+
+
+    }, [publicKey]);
+
+
+
+    return(
+
+        <UserContext.Provider value={publicKey}>
+<Component {...pageProps} />
+    </UserContext.Provider>
+
+
+    
+
+
+    ) ;
 };
 
 export default App;

@@ -1,82 +1,184 @@
-import type { NextPage } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import Image from 'next/image';
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styles from '../styles/Home.module.css';
+import { UserContext } from '../UserContext';
+import { AtaRecord } from '../types';
+import { fetchAtaRecords, insertNewAtaRecord } from '../apiFunctions';
+import { Connection, PublicKey } from '@solana/web3.js'
+import { getAccount } from '@solana/spl-token'
+import { delay } from '../utils';
 
-const WalletDisconnectButtonDynamic = dynamic(
-    async () => (await import('@solana/wallet-adapter-react-ui')).WalletDisconnectButton,
-    { ssr: false }
-);
-const WalletMultiButtonDynamic = dynamic(
-    async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
-    { ssr: false }
-);
+interface Item {
+    id: number;
+    created_at: string;
+    test: number;
+  }
+  
+  interface HomeProps {
+    items: Item[];
+  }
 
-const Home: NextPage = () => {
+
+const Home: NextPage<HomeProps> = () => {
+
+    const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=56f5d18f-ce0f-495b-a381-f77fe1e237da', 'confirmed');
+
+
+    const pubkeyObj = useContext(UserContext)
+
+        // Define a state variable to hold the input value
+        const [ataInputValue, setAtaInputValue] = useState('');
+        const [tokenNameInputValue, setTokenNameInputValue] = useState('');
+        const [ataRecords, setAtaRecords] = useState<AtaRecord[]>([]);
+        const [triggerUseEffect, setTriggerUseEffect] = useState(false);
+
+
+        // Update inputValue whenever the user types in the input field
+        const handleAtaInputChange = (e: any) => {
+            setAtaInputValue(e.target.value);
+        };
+
+        const handleTokenNameInputChange = (e: any) => {
+            setTokenNameInputValue(e.target.value);
+        };
+
+        // add token function
+        const addToken = async () => {
+            const alreadyExists = ataRecords.find((record) => record.ata === ataInputValue);
+            if (alreadyExists) {
+                return;
+            }
+
+            if (ataInputValue.length > 20 && tokenNameInputValue.length > 0 && pubkeyObj) {
+
+                const ataPk = new PublicKey(ataInputValue);
+                const ataAcc = await getAccount(connection, ataPk, 'confirmed');
+                await delay(700);
+                const mint = ataAcc?.mint.toBase58();
+                
+                const ataRecord: AtaRecord = {
+                    pubkey_ata: `${pubkeyObj.toBase58()}_${ataInputValue}`,
+                    pubkey: pubkeyObj.toBase58(),
+                    ata: ataInputValue,
+                    created_at: Date.now(),
+                    updated_at: Date.now(),
+                    daily_starting_bal: null,
+                    weekly_starting_bal: null,
+                    monthly_starting_bal: null,
+                    decimals: null,
+                    mint_address: mint,
+                    mint_name: tokenNameInputValue,
+                    current_bal: null,
+                    difference: null,
+                };
+
+                const response = await insertNewAtaRecord(ataRecord);
+                console.log(response);
+
+                setAtaRecords([...ataRecords, ataRecord]);
+
+                setAtaInputValue('');
+                setTokenNameInputValue('');
+                setTriggerUseEffect(!triggerUseEffect);
+            }
+        };
+
+        // console log the pubkeyObj when it changes
+        useEffect(() => {
+            (async () => {
+                const tempAtaRecords:AtaRecord[] = [];
+
+                await fetchAtaRecords(pubkeyObj?.toBase58()).then((records) => {
+                    setAtaRecords(records);
+                    tempAtaRecords.push(...records);
+                });
+                await delay(700);
+
+
+                // get all atas for the pubkey and then get the balance for each ata and assign it to the ata record current_bal
+                console.log(pubkeyObj?.toBase58());
+                console.log(ataRecords);
+                console.log(tempAtaRecords);
+                if (pubkeyObj) {
+                    if (ataRecords.length > 0 || tempAtaRecords.length > 0) {
+                        const updatedAtaRecords: AtaRecord[] = [];
+                        // if ataRecords is empty, use tempAtaRecords
+                        const ataRecordsToLoop = ataRecords.length > 0 ? ataRecords : tempAtaRecords;
+                        for (const ataRecord of ataRecordsToLoop) {
+                            const ataPk = new PublicKey(ataRecord.ata);
+                            await connection.getTokenAccountBalance(ataPk, 'confirmed').then((info) => {
+                                ataRecord.current_bal = info.value.uiAmount;
+                                ataRecord.difference = ataRecord.daily_starting_bal !== null && info.value.uiAmount !== null ? info.value.uiAmount - ataRecord.daily_starting_bal : null;
+                                updatedAtaRecords.push(ataRecord);
+                                
+                            });
+                            await delay(700);
+
+                        }
+                        setAtaRecords(updatedAtaRecords);
+                    }
+
+                }
+
+                
+            })();
+        }, [pubkeyObj, triggerUseEffect]);
     return (
         <div className={styles.container}>
             <Head>
-                <title>Create Next App</title>
-                <meta name="description" content="Generated by create next app" />
+                <title>Rude Bot Dashboard</title>
+                <meta name="description" content="Solana Arbitrage Bot" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
             <main className={styles.main}>
-                <h1 className={styles.title}>
-                    Welcome to <a href="https://nextjs.org">Next.js!</a>
-                </h1>
-
-                <div className={styles.walletButtons}>
-                    <WalletMultiButtonDynamic />
-                    <WalletDisconnectButtonDynamic />
-                </div>
-
                 <p className={styles.description}>
-                    Get started by editing <code className={styles.code}>pages/index.tsx</code>
+                   <code className={styles.code}>Token Balance Tracker</code>
                 </p>
+                <p>Start tracking balances for: {pubkeyObj?.toBase58()}</p>
+                <input className={styles.input} type="text" value={ataInputValue} onChange={handleAtaInputChange} placeholder="Enter your associated token account address" />
+                <input className={styles.input} type="text" value={tokenNameInputValue} onChange={handleTokenNameInputChange} placeholder="Enter the token name" />
+                <button className={styles.button} onClick={addToken}>Add Token</button>
+                <h1>Your Tokens</h1>
+      <ul>
+      <table className={styles.table}>
+            <tbody>
+            <tr>
+                <th>Token</th>
+                <th>Today's Starting Balance</th>
+                <th>Current Balance</th>
+                <th>Difference</th>
+                </tr>
+                {ataRecords?.map((item) => (
+      <tr key={item.ata}>
+        <td>{item.mint_name || 'N/A'}</td>
+        <td>{item.daily_starting_bal !== null ? item.daily_starting_bal : 'N/A'}</td>
+        <td>{item.current_bal !== null ? item.current_bal : 'N/A'}</td>
+        <td>{item.difference !== null ? item.difference : 'N/A'}</td>
+      </tr>
+    ))}
+            </tbody>
+            </table>
+      </ul>
 
-                <div className={styles.grid}>
-                    <a href="https://nextjs.org/docs" className={styles.card}>
-                        <h2>Documentation &rarr;</h2>
-                        <p>Find in-depth information about Next.js features and API.</p>
-                    </a>
-
-                    <a href="https://nextjs.org/learn" className={styles.card}>
-                        <h2>Learn &rarr;</h2>
-                        <p>Learn about Next.js in an interactive course with quizzes!</p>
-                    </a>
-
-                    <a href="https://github.com/vercel/next.js/tree/master/examples" className={styles.card}>
-                        <h2>Examples &rarr;</h2>
-                        <p>Discover and deploy boilerplate example Next.js projects.</p>
-                    </a>
-
-                    <a
-                        href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-                        className={styles.card}
-                    >
-                        <h2>Deploy &rarr;</h2>
-                        <p>Instantly deploy your Next.js site to a public URL with Vercel.</p>
-                    </a>
-                </div>
             </main>
 
-            <footer className={styles.footer}>
-                <a
-                    href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Powered by{' '}
-                    <span className={styles.logo}>
-                        <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-                    </span>
-                </a>
-            </footer>
+
+            <div>
+
+    </div>
         </div>
+
+        
     );
 };
+
+// export const getServerSideProps: GetServerSideProps = async () => {
+//     const items = await getAt();
+//     return { props: { items } };
+//   };
 
 export default Home;
