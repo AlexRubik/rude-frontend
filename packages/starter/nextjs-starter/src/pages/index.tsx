@@ -62,17 +62,18 @@ const Home: NextPage<HomeProps> = () => {
                 return;
             }
 
-            if (ataInputValue.length > 30 && tokenNameInputValue.length > 0 && pubkeyObj) {
+            if (ataInputValue.length > 30 && tokenNameInputValue.length > 0 && tokenNameInputValue.length < 45 && pubkeyObj) {
 
                 const ataPk = new PublicKey(ataInputValue);
                 const ataAcc = await getAccount(connection, ataPk, 'confirmed');
                 await delay(700);
                 const mint = ataAcc?.mint.toBase58();
+                const finalAtaStr = ataInputValue.replace(/\s/g, '');
                 
                 const ataRecord: AtaRecord = {
                     pubkey_ata: `${pubkeyObj.toBase58()}_${ataInputValue}`,
                     pubkey: pubkeyObj.toBase58(),
-                    ata: ataInputValue,
+                    ata: finalAtaStr,
                     created_at: Date.now(),
                     updated_at: Date.now(),
                     daily_starting_bal: null,
@@ -158,6 +159,7 @@ const Home: NextPage<HomeProps> = () => {
                 <button className={styles.button} onClick={addToken}>Add Token</button>
                 <h1>Your Tokens</h1>
                 <button className={styles.button} hidden={refreshingTokens} onClick={refreshTokens}>Refresh Tokens</button>
+                <p hidden={!refreshingTokens}>Fetching balances...</p>
                 <p>Time: {currentTime} UTC</p>
 
       <ul>
