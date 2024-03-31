@@ -1,6 +1,6 @@
 // Assuming you have the necessary types, adjust if needed.
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getAtaRecords } from "../../../lib/db";
+import { getAtaRecords } from "../../db";
 import { AtaRecord } from '../../types';
 
 // Define a type for your expected request body for better type-checking.

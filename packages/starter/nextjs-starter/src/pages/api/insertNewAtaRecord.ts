@@ -1,6 +1,6 @@
 // pages/api/data/insertNewAtaRecord.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { addAtaRecordToDb } from '../../../lib/db';
+import { addAtaRecordToDb } from '../../db';
 import { AtaRecord } from '../../types';
 
 
