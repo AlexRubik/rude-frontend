@@ -156,9 +156,9 @@ const Home: NextPage<HomeProps> = () => {
                 <p>Start tracking balances for: {pubkeyObj?.toBase58()}</p>
                 <input className={styles.input} type="text" value={ataInputValue} onChange={handleAtaInputChange} placeholder="Enter your associated token account address" />
                 <input className={styles.input} type="text" value={tokenNameInputValue} onChange={handleTokenNameInputChange} placeholder="Enter the token name" />
-                <button className={styles.button} onClick={addToken}>Add Token</button>
+                <button className={styles.button} hidden={pubkeyObj === null || pubkeyObj === undefined} onClick={addToken}>Add Token</button>
                 <h1>Your Tokens</h1>
-                <button className={styles.button} hidden={refreshingTokens} onClick={refreshTokens}>Refresh Tokens</button>
+                <button className={styles.button} hidden={refreshingTokens || pubkeyObj === null || pubkeyObj === undefined} onClick={refreshTokens}>Refresh Tokens</button>
                 <p hidden={!refreshingTokens}>Fetching balances...</p>
                 <p>Time: {currentTime} UTC</p>
 
