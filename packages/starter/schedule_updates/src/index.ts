@@ -1,3 +1,4 @@
+require('dotenv').config();
 import { Pool } from 'pg';
 import { Connection, PublicKey } from '@solana/web3.js'
 
@@ -23,7 +24,7 @@ const pool = new Pool({
   user: 'postgres.tffrohjlnezcnllivjlo',
   host: 'aws-0-eu-central-1.pooler.supabase.com',
   database: 'postgres',
-  password: 'xfQMvNDrLdmG4cWS',
+  password: process.env.DB_PASSWORD || '',
   port: 5432,
 });
 

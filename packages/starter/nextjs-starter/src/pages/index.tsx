@@ -9,7 +9,7 @@ import { AtaRecord } from '../types';
 import { fetchAtaRecords, insertNewAtaRecord } from '../apiFunctions';
 import { Connection, PublicKey } from '@solana/web3.js'
 import { getAccount } from '@solana/spl-token'
-import { delay } from '../utils';
+import { delay, formatTime, getUTCTime } from '../utils';
 
 interface Item {
     id: number;
@@ -34,6 +34,10 @@ const Home: NextPage<HomeProps> = () => {
         const [tokenNameInputValue, setTokenNameInputValue] = useState('');
         const [ataRecords, setAtaRecords] = useState<AtaRecord[]>([]);
         const [triggerUseEffect, setTriggerUseEffect] = useState(false);
+        const [currentTime, setCurrentTime] = useState(getUTCTime());
+        // tokens refreshing bool status
+        const [refreshingTokens, setRefreshingTokens] = useState(false);
+        
 
 
         // Update inputValue whenever the user types in the input field
@@ -45,6 +49,12 @@ const Home: NextPage<HomeProps> = () => {
             setTokenNameInputValue(e.target.value);
         };
 
+
+        const refreshTokens = async () => { 
+            setRefreshingTokens(true);
+            setTriggerUseEffect(!triggerUseEffect);
+
+        };
         // add token function
         const addToken = async () => {
             const alreadyExists = ataRecords.find((record) => record.ata === ataInputValue);
@@ -52,7 +62,7 @@ const Home: NextPage<HomeProps> = () => {
                 return;
             }
 
-            if (ataInputValue.length > 20 && tokenNameInputValue.length > 0 && pubkeyObj) {
+            if (ataInputValue.length > 30 && tokenNameInputValue.length > 0 && pubkeyObj) {
 
                 const ataPk = new PublicKey(ataInputValue);
                 const ataAcc = await getAccount(connection, ataPk, 'confirmed');
@@ -89,6 +99,8 @@ const Home: NextPage<HomeProps> = () => {
         // console log the pubkeyObj when it changes
         useEffect(() => {
             (async () => {
+
+                setCurrentTime(getUTCTime());
                 const tempAtaRecords:AtaRecord[] = [];
 
                 await fetchAtaRecords(pubkeyObj?.toBase58()).then((records) => {
@@ -107,6 +119,7 @@ const Home: NextPage<HomeProps> = () => {
                         const updatedAtaRecords: AtaRecord[] = [];
                         // if ataRecords is empty, use tempAtaRecords
                         const ataRecordsToLoop = ataRecords.length > 0 ? ataRecords : tempAtaRecords;
+                        setRefreshingTokens(true);
                         for (const ataRecord of ataRecordsToLoop) {
                             const ataPk = new PublicKey(ataRecord.ata);
                             await connection.getTokenAccountBalance(ataPk, 'confirmed').then((info) => {
@@ -119,6 +132,7 @@ const Home: NextPage<HomeProps> = () => {
 
                         }
                         setAtaRecords(updatedAtaRecords);
+                        setRefreshingTokens(false);
                     }
 
                 }
@@ -143,6 +157,9 @@ const Home: NextPage<HomeProps> = () => {
                 <input className={styles.input} type="text" value={tokenNameInputValue} onChange={handleTokenNameInputChange} placeholder="Enter the token name" />
                 <button className={styles.button} onClick={addToken}>Add Token</button>
                 <h1>Your Tokens</h1>
+                <button className={styles.button} hidden={refreshingTokens} onClick={refreshTokens}>Refresh Tokens</button>
+                <p>Time: {currentTime} UTC</p>
+
       <ul>
       <table className={styles.table}>
             <tbody>
