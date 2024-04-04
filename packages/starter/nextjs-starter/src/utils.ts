@@ -1,3 +1,5 @@
+import { Connection, PublicKey } from '@solana/web3.js';
+
 export function delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
@@ -15,4 +17,14 @@ export function getUTCTime(): string {
   const now = new Date();
   return now.getUTCHours().toString().padStart(2, '0') + ':' + 
          now.getUTCMinutes().toString().padStart(2, '0');
+}
+
+export async function getSolBalance(connection: Connection, pubkey: string | PublicKey): Promise<number> {
+  if (typeof pubkey === 'string') {
+      pubkey = new PublicKey(pubkey);
+  }
+  const balance = await connection.getBalance(pubkey);
+  
+  return balance / 10 ** 9;
+   
 }

@@ -9,7 +9,7 @@ import { AtaRecord } from '../types';
 import { fetchAtaRecords, insertNewAtaRecord } from '../apiFunctions';
 import { Connection, PublicKey } from '@solana/web3.js'
 import { getAccount } from '@solana/spl-token'
-import { delay, formatTime, getUTCTime } from '../utils';
+import { delay, formatTime, getSolBalance, getUTCTime } from '../utils';
 
 interface Item {
     id: number;
@@ -37,6 +37,8 @@ const Home: NextPage<HomeProps> = () => {
         const [currentTime, setCurrentTime] = useState(getUTCTime());
         // tokens refreshing bool status
         const [refreshingTokens, setRefreshingTokens] = useState(false);
+        // sol balance
+        const [solBalance, setSolBalance] = useState(0);
         
 
 
@@ -62,7 +64,7 @@ const Home: NextPage<HomeProps> = () => {
                 return;
             }
 
-            if (ataInputValue.length > 30 && tokenNameInputValue.length > 0 && tokenNameInputValue.length < 45 && pubkeyObj) {
+            if (ataInputValue.length > 30 && tokenNameInputValue.length > 0 && tokenNameInputValue.length < 20 && pubkeyObj) {
 
                 const ataPk = new PublicKey(ataInputValue);
                 const ataAcc = await getAccount(connection, ataPk, 'confirmed');
@@ -115,7 +117,10 @@ const Home: NextPage<HomeProps> = () => {
                 console.log(pubkeyObj?.toBase58());
                 console.log(ataRecords);
                 console.log(tempAtaRecords);
-                if (pubkeyObj) {
+                if (pubkeyObj !== null && pubkeyObj !== undefined) {
+                    const solBalance = await getSolBalance(connection, pubkeyObj.toBase58());
+                    setSolBalance(solBalance);
+                    console.log(solBalance);
                     if (ataRecords.length > 0 || tempAtaRecords.length > 0) {
                         const updatedAtaRecords: AtaRecord[] = [];
                         // if ataRecords is empty, use tempAtaRecords
@@ -161,6 +166,7 @@ const Home: NextPage<HomeProps> = () => {
                 <button className={styles.button} hidden={refreshingTokens || pubkeyObj === null || pubkeyObj === undefined} onClick={refreshTokens}>Refresh Tokens</button>
                 <p hidden={!refreshingTokens}>Fetching balances...</p>
                 <p>Time: {currentTime} UTC</p>
+                <p>SOL Balance: {solBalance}</p>
 
       <ul>
       <table className={styles.table}>
