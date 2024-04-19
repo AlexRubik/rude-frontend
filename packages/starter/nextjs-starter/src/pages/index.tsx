@@ -8,7 +8,7 @@ import { UserContext } from '../UserContext';
 import { AtaRecord } from '../types';
 import { fetchAtaRecords, insertNewAtaRecord } from '../apiFunctions';
 import { Connection, PublicKey } from '@solana/web3.js'
-import { getAccount } from '@solana/spl-token'
+import { Account, getAccount } from '@solana/spl-token'
 import { delay, formatTime, getSolBalance, getUTCTime } from '../utils';
 
 interface Item {
@@ -25,6 +25,7 @@ interface Item {
 const Home: NextPage<HomeProps> = () => {
 
     const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=56f5d18f-ce0f-495b-a381-f77fe1e237da', 'confirmed');
+    const connection2 = new Connection('https://api.mainnet-beta.solana.com', 'confirmed');
 
 
     const pubkeyObj = useContext(UserContext)
@@ -67,7 +68,28 @@ const Home: NextPage<HomeProps> = () => {
             if (ataInputValue.length > 30 && tokenNameInputValue.length > 0 && tokenNameInputValue.length < 20 && pubkeyObj) {
 
                 const ataPk = new PublicKey(ataInputValue);
-                const ataAcc = await getAccount(connection, ataPk, 'confirmed');
+                let ataAcc: Account | undefined | null = undefined;
+
+                let attempts = 0;
+                const maxRetries = 5;
+    
+                while (attempts < maxRetries) {
+                    try {
+                        ataAcc = await getAccount(connection, ataPk, 'confirmed');
+                        return ataAcc; // Return on first successful attempt
+                    } catch (error) {
+                        console.error(error);
+                        attempts++;
+                        if (attempts === maxRetries) {
+                            ataAcc = await getAccount(connection2, ataPk, 'confirmed');
+
+                            //throw new Error(`Failed to get account after ${maxRetries} attempts`);
+                        }
+                        // Wait a bit before retrying
+                        await delay(1000);
+                    }
+                }
+                
                 await delay(700);
                 const mint = ataAcc?.mint.toBase58();
                 const finalAtaStr = ataInputValue.replace(/\s/g, '');
@@ -149,12 +171,28 @@ const Home: NextPage<HomeProps> = () => {
     return (
         <div className={styles.container}>
             <Head>
-                <title>Rude Bot Dashboard</title>
-                <meta name="description" content="Solana Arbitrage Bot" />
+                <title>Solana Arbitrage</title>
+                <meta name="description" content="Everything you need to arbitrage on the Solana blockchain." />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
             <main className={styles.main}>
+
+                <ul>
+
+            <li>
+                    <a className={styles.a} href='https://discord.gg/6DTGbMNYuA' target="_blank" rel="noopener noreferrer">
+                        Join us on Discord!
+                    </a>
+                    </li>
+                    <li>
+                    <a className={styles.a} href='https://rude-bot-org.gitbook.io/' target="_blank" rel="noopener noreferrer">
+                        Arbitrage Bot Setup Guide
+                    </a>
+                    </li>
+                    </ul>
+
+                
                 <p className={styles.description}>
                    <code className={styles.code}>Token Balance Tracker</code>
                 </p>
@@ -179,7 +217,7 @@ const Home: NextPage<HomeProps> = () => {
                 </tr>
                 {ataRecords?.map((item) => (
       <tr key={item.ata}>
-        <td>{item.mint_name || 'N/A'}</td>
+        <td title={item.mint_address !== null ? item.mint_address : ''}>{item.mint_name || 'N/A'}</td>
         <td>{item.daily_starting_bal !== null ? item.daily_starting_bal : 'N/A'}</td>
         <td>{item.current_bal !== null ? item.current_bal : 'N/A'}</td>
         <td>{item.difference !== null ? item.difference : 'N/A'}</td>

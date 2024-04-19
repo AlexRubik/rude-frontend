@@ -91,6 +91,18 @@
   max-width: 300px;
 }
 
+.a {
+  color: #097cff;
+  text-decoration: underline;
+  margin: 5px;
+}
+.a:hover,
+.a:focus,
+.a:active {
+  color: #0070f3;
+  border-color: #0070f3;
+}
+
 .card:hover,
 .card:focus,
 .card:active {
