@@ -13,7 +13,7 @@ export interface AtaRecord {
     weekly_starting_bal: number | null;
     monthly_starting_bal: number | null;
     decimals: number | null;
-    mint_address: string | null | undefined;
+    mint_address: string | null;
     mint_name: string | null;
     current_bal?: number | null;
     difference?: number | null;

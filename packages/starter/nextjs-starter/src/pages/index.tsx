@@ -68,7 +68,7 @@ const Home: NextPage<HomeProps> = () => {
             if (ataInputValue.length > 30 && tokenNameInputValue.length > 0 && tokenNameInputValue.length < 20 && pubkeyObj) {
 
                 const ataPk = new PublicKey(ataInputValue);
-                let ataAcc: Account | undefined | null = undefined;
+                let ataAcc: Account | null = null;
 
                 let attempts = 0;
                 const maxRetries = 5;
@@ -76,7 +76,6 @@ const Home: NextPage<HomeProps> = () => {
                 while (attempts < maxRetries) {
                     try {
                         ataAcc = await getAccount(connection, ataPk, 'confirmed');
-                        return ataAcc; // Return on first successful attempt
                     } catch (error) {
                         console.error(error);
                         attempts++;
@@ -92,6 +91,9 @@ const Home: NextPage<HomeProps> = () => {
                 
                 await delay(700);
                 const mint = ataAcc?.mint.toBase58();
+                if (mint === null || mint === undefined) {
+                    throw new Error('Failed to get mint address for: ' + ataInputValue);
+                }
                 const finalAtaStr = ataInputValue.replace(/\s/g, '');
                 
                 const ataRecord: AtaRecord = {
