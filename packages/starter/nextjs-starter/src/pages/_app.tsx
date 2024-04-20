@@ -8,6 +8,7 @@ import type { FC, ReactNode } from 'react';
 import React, { useEffect, useMemo, useState } from 'react';
 import {UserContext} from '../UserContext';
 import dynamic from 'next/dynamic';
+import Navbar from '../components/navbar';
 
 // Use require instead of import since order matters
 require('@solana/wallet-adapter-react-ui/styles.css');
@@ -58,6 +59,9 @@ const App: FC<{ Component: FC<any>; pageProps: any }> = ({ Component, pageProps 
         <>
 
         <Context>
+        <div style={{ position: 'fixed', top: 0, left: 0, zIndex: 1, margin: 12 }}>
+            <Navbar />
+            </div>
         <div style={{ position: 'fixed', top: 0, right: 0, zIndex: 1, margin: 12 }}>
         <WalletMultiButtonDynamic />
         </div>

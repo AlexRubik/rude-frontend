@@ -1,7 +1,5 @@
-import type { GetServerSideProps, NextPage } from 'next';
-import dynamic from 'next/dynamic';
+import type { NextPage } from 'next';
 import Head from 'next/head';
-import Image from 'next/image';
 import React, { useContext, useEffect, useState } from 'react';
 import styles from '../styles/Home.module.css';
 import { UserContext } from '../UserContext';
@@ -22,7 +20,7 @@ interface Item {
   }
 
 
-const Home: NextPage<HomeProps> = () => {
+const Balances: NextPage<HomeProps> = () => {
 
     const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=56f5d18f-ce0f-495b-a381-f77fe1e237da', 'confirmed');
     const connection2 = new Connection('https://api.mainnet-beta.solana.com', 'confirmed');
@@ -180,9 +178,39 @@ const Home: NextPage<HomeProps> = () => {
 
             <main className={styles.main}>
 
+                
+                <p className={styles.description}>
+                   <code className={styles.code}>Token Balance Tracker</code>
+                </p>
+                <p>Start tracking balances for: {pubkeyObj?.toBase58()}</p>
+                <input className={styles.input} type="text" value={ataInputValue} onChange={handleAtaInputChange} placeholder="Enter your associated token account address" />
+                <input className={styles.input} type="text" value={tokenNameInputValue} onChange={handleTokenNameInputChange} placeholder="Enter the token name" />
+                <button className={styles.button} hidden={pubkeyObj === null || pubkeyObj === undefined} onClick={addToken}>Add Token</button>
+                <button className={styles.button} hidden={refreshingTokens || pubkeyObj === null || pubkeyObj === undefined} onClick={refreshTokens}>Refresh Tokens</button>
+                <p hidden={!refreshingTokens}>Fetching balances...</p>
                 <p>Time: {currentTime} UTC</p>
                 <p>SOL Balance: {solBalance}</p>
 
+      <ul>
+      <table className={styles.table}>
+            <tbody>
+            <tr>
+                <th>Token</th>
+                <th>Today's Starting Balance</th>
+                <th>Current Balance</th>
+                <th>Difference</th>
+                </tr>
+                {ataRecords?.map((item) => (
+      <tr key={item.ata}>
+        <td title={item.mint_address !== null ? item.mint_address : ''}>{item.mint_name || 'N/A'}</td>
+        <td>{item.daily_starting_bal !== null ? item.daily_starting_bal : 'N/A'}</td>
+        <td>{item.current_bal !== null ? item.current_bal : 'N/A'}</td>
+        <td>{item.difference !== null ? item.difference : 'N/A'}</td>
+      </tr>
+    ))}
+            </tbody>
+            </table>
+      </ul>
 
             </main>
 
@@ -201,4 +229,4 @@ const Home: NextPage<HomeProps> = () => {
 //     return { props: { items } };
 //   };
 
-export default Home;
+export default Balances;
