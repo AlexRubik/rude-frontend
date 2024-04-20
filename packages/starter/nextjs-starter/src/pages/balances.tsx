@@ -36,6 +36,8 @@ const Balances: NextPage<HomeProps> = () => {
         const [currentTime, setCurrentTime] = useState(getUTCTime());
         // tokens refreshing bool status
         const [refreshingTokens, setRefreshingTokens] = useState(false);
+        // adding token
+        const [addingToken, setAddingToken] = useState(false);
         // sol balance
         const [solBalance, setSolBalance] = useState(0);
         
@@ -56,8 +58,17 @@ const Balances: NextPage<HomeProps> = () => {
             setTriggerUseEffect(!triggerUseEffect);
 
         };
+        const addTokenOnClick = async () => {
+            setAddingToken(true);
+            await addToken();
+            setAddingToken(false);
+
+
+        }
         // add token function
         const addToken = async () => {
+            console.log('Adding ata...');
+
             const alreadyExists = ataRecords.find((record) => record.ata === ataInputValue);
             if (alreadyExists) {
                 return;
@@ -69,29 +80,37 @@ const Balances: NextPage<HomeProps> = () => {
                 let ataAcc: Account | null = null;
 
                 let attempts = 0;
-                const maxRetries = 5;
+                const maxRetries = 3;
     
-                while (attempts < maxRetries) {
+                while (attempts < maxRetries && !ataAcc) {
                     try {
                         ataAcc = await getAccount(connection, ataPk, 'confirmed');
-                    } catch (error) {
-                        console.error(error);
-                        attempts++;
-                        if (attempts === maxRetries) {
+                        console.log('Account found for mint:', ataAcc.mint.toBase58());
+                        if (!ataAcc) {
+                            // If ataAcc is still null, try the second connection
+                            console.log('Trying second connection...');
                             ataAcc = await getAccount(connection2, ataPk, 'confirmed');
-
-                            //throw new Error(`Failed to get account after ${maxRetries} attempts`);
+                            console.log('Account found for mint:', ataAcc.mint.toBase58());
                         }
+                    } catch (error) {
+                        console.error('Attempt to get account failed:', error);
+                        attempts++;
                         // Wait a bit before retrying
+                        console.log('Retrying to get account...');
                         await delay(1000);
                     }
                 }
-                
-                await delay(700);
+            
+                if (!ataAcc) {
+                    setAddingToken(false);
+                    throw new Error(`Failed to get account after ${maxRetries} attempts`);
+                }
                 const mint = ataAcc?.mint.toBase58();
                 if (mint === null || mint === undefined) {
+                    setAddingToken(false);
                     throw new Error('Failed to get mint address for: ' + ataInputValue);
                 }
+                // remove any whitespace from the ataInputValue
                 const finalAtaStr = ataInputValue.replace(/\s/g, '');
                 
                 const ataRecord: AtaRecord = {
@@ -117,6 +136,7 @@ const Balances: NextPage<HomeProps> = () => {
 
                 setAtaInputValue('');
                 setTokenNameInputValue('');
+                setAddingToken(false);
                 setTriggerUseEffect(!triggerUseEffect);
             }
         };
@@ -185,7 +205,7 @@ const Balances: NextPage<HomeProps> = () => {
                 <p>Start tracking balances for: {pubkeyObj?.toBase58()}</p>
                 <input className={styles.input} type="text" value={ataInputValue} onChange={handleAtaInputChange} placeholder="Enter your associated token account address" />
                 <input className={styles.input} type="text" value={tokenNameInputValue} onChange={handleTokenNameInputChange} placeholder="Enter the token name" />
-                <button className={styles.button} hidden={pubkeyObj === null || pubkeyObj === undefined} onClick={addToken}>Add Token</button>
+                <button className={styles.button} hidden={pubkeyObj === null || pubkeyObj === undefined || addingToken} onClick={addTokenOnClick}>Add Token</button>
                 <button className={styles.button} hidden={refreshingTokens || pubkeyObj === null || pubkeyObj === undefined} onClick={refreshTokens}>Refresh Tokens</button>
                 <p hidden={!refreshingTokens}>Fetching balances...</p>
                 <p>Time: {currentTime} UTC</p>

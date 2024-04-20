@@ -59,12 +59,11 @@ const App: FC<{ Component: FC<any>; pageProps: any }> = ({ Component, pageProps 
         <>
 
         <Context>
-        <div style={{ position: 'fixed', top: 0, left: 0, zIndex: 1, margin: 12 }}>
-            <Navbar />
-            </div>
-        <div style={{ position: 'fixed', top: 0, right: 0, zIndex: 1, margin: 12 }}>
+        {/* <div style={{ position: 'fixed', top: 0, right: 0, zIndex: 1, margin: 12 }}>
         <WalletMultiButtonDynamic />
-        </div>
+        </div> */}
+            <Navbar />
+
             <Content Component={Component} pageProps={pageProps} />
         </Context>
 

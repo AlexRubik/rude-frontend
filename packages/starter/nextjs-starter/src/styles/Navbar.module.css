@@ -21,3 +21,26 @@
     max-width:1100px;
   }
 
+  .navbar {
+    position: fixed;        /* Fixed positioning to keep the navbar at the top */
+    top: 0;                 /* Align to the top */
+    left: 0;                /* Align to the left side */
+    width: 100%;            /* Stretch across the full width of the viewport */
+    background-color: #313131; /* Grey background */
+    z-index: 1000;          /* Ensures the navbar stays on top of other content */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional: adds shadow for better separation */
+    height: 65px;           /* Set the height of the navbar */
+    display: flex;          /* Using flexbox for alignment */
+    align-items: center;    /* Center items vertically */
+    padding: 0 20px;        /* Padding on the sides */
+    box-sizing: border-box; /* Ensures padding doesn't affect the total width */
+}
+
+.navbar .navbarRight {
+    position: absolute;
+    right: 10px; /* Right alignment with some padding */
+    top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center; /* Vertically center the links */
+}

@@ -1,10 +1,18 @@
 import Link from 'next/link';
 import styles from '../styles/Navbar.module.css';
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import dynamic from 'next/dynamic';
 
 // Example in a component file
 const Navbar = () => {
+
+    const WalletMultiButtonDynamic = dynamic(
+        async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
+        { ssr: false }
+    );
     return (
-        <div className={styles.container}>
+        <div className={styles.navbar}>
+        <div>
       <nav>
         <Link href="/" prefetch={true}>
           <a className={styles.link}>Home</a>
@@ -21,7 +29,13 @@ const Navbar = () => {
                     <a className={styles.link} href='https://rude-bot-org.gitbook.io/' target="_blank" rel="noopener noreferrer">
                         Documentation
                     </a>
+                    <div className={styles.navbarRight}>
+
+                    <WalletMultiButtonDynamic />
+                    </div>
+
       </nav>
+    </div>
     </div>
     );
   };
