@@ -150,4 +150,14 @@
   padding: 10px;
 }
 
+
+
+  .mobileLinks {
+    display: block;
+    text-align: center;
+  }
+
+
+
+
 /* This applies margin around the text, which is already handled by padding in td and th. If you need additional margin inside cells, consider increasing padding or using inner elements. */

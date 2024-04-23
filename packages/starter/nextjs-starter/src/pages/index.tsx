@@ -8,7 +8,6 @@ import { UserContext } from '../UserContext';
 import { AtaRecord } from '../types';
 import { fetchAtaRecords, insertNewAtaRecord } from '../apiFunctions';
 import { Connection, PublicKey } from '@solana/web3.js'
-import { Account, getAccount } from '@solana/spl-token'
 import { delay, formatTime, getSolBalance, getUTCTime } from '../utils';
 
 interface Item {
@@ -42,86 +41,6 @@ const Home: NextPage<HomeProps> = () => {
         const [solBalance, setSolBalance] = useState(0);
         
 
-
-        // Update inputValue whenever the user types in the input field
-        const handleAtaInputChange = (e: any) => {
-            setAtaInputValue(e.target.value);
-        };
-
-        const handleTokenNameInputChange = (e: any) => {
-            setTokenNameInputValue(e.target.value);
-        };
-
-
-        const refreshTokens = async () => { 
-            setRefreshingTokens(true);
-            setTriggerUseEffect(!triggerUseEffect);
-
-        };
-        // add token function
-        const addToken = async () => {
-            const alreadyExists = ataRecords.find((record) => record.ata === ataInputValue);
-            if (alreadyExists) {
-                return;
-            }
-
-            if (ataInputValue.length > 30 && tokenNameInputValue.length > 0 && tokenNameInputValue.length < 20 && pubkeyObj) {
-
-                const ataPk = new PublicKey(ataInputValue);
-                let ataAcc: Account | null = null;
-
-                let attempts = 0;
-                const maxRetries = 5;
-    
-                while (attempts < maxRetries) {
-                    try {
-                        ataAcc = await getAccount(connection, ataPk, 'confirmed');
-                    } catch (error) {
-                        console.error(error);
-                        attempts++;
-                        if (attempts === maxRetries) {
-                            ataAcc = await getAccount(connection2, ataPk, 'confirmed');
-
-                            //throw new Error(`Failed to get account after ${maxRetries} attempts`);
-                        }
-                        // Wait a bit before retrying
-                        await delay(1000);
-                    }
-                }
-                
-                await delay(700);
-                const mint = ataAcc?.mint.toBase58();
-                if (mint === null || mint === undefined) {
-                    throw new Error('Failed to get mint address for: ' + ataInputValue);
-                }
-                const finalAtaStr = ataInputValue.replace(/\s/g, '');
-                
-                const ataRecord: AtaRecord = {
-                    pubkey_ata: `${pubkeyObj.toBase58()}_${ataInputValue}`,
-                    pubkey: pubkeyObj.toBase58(),
-                    ata: finalAtaStr,
-                    created_at: Date.now(),
-                    updated_at: Date.now(),
-                    daily_starting_bal: null,
-                    weekly_starting_bal: null,
-                    monthly_starting_bal: null,
-                    decimals: null,
-                    mint_address: mint,
-                    mint_name: tokenNameInputValue,
-                    current_bal: null,
-                    difference: null,
-                };
-
-                const response = await insertNewAtaRecord(ataRecord);
-                console.log(response);
-
-                setAtaRecords([...ataRecords, ataRecord]);
-
-                setAtaInputValue('');
-                setTokenNameInputValue('');
-                setTriggerUseEffect(!triggerUseEffect);
-            }
-        };
 
         // console log the pubkeyObj when it changes
         useEffect(() => {
@@ -180,6 +99,34 @@ const Home: NextPage<HomeProps> = () => {
 
             <main className={styles.main}>
 
+                <div className={styles.mobileLinks}>
+
+                <a href="https://www.youtube.com/watch?v=RNhc0KRa2AI" target="_blank" rel="noopener noreferrer">
+                    <h2>
+                        Beginner Tutorial
+                    </h2>
+                </a>
+                <a href="https://discord.gg/6DTGbMNYuA" target="_blank" rel="noopener noreferrer">
+                    <h2>
+                        Discord
+                    </h2>
+                </a>
+
+                <a href="https://github.com/AlexRubik/rude-bot-solana" target="_blank" rel="noopener noreferrer">
+                    <h2>
+                        GitHub
+                    </h2>
+                </a>
+
+                <a href="https://rude-bot-org.gitbook.io/" target="_blank" rel="noopener noreferrer">
+                    <h2>
+                        Documentation
+                    </h2>
+                </a>
+                </div>
+
+
+
                 <p>Time: {currentTime} UTC</p>
                 <p>SOL Balance: {solBalance}</p>
 
@@ -196,9 +143,5 @@ const Home: NextPage<HomeProps> = () => {
     );
 };
 
-// export const getServerSideProps: GetServerSideProps = async () => {
-//     const items = await getAt();
-//     return { props: { items } };
-//   };
 
 export default Home;
