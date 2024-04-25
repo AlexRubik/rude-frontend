@@ -1,13 +1,15 @@
 .link {
-    color: #097cff;
+    color: #dfdfdf;
     text-decoration: underline;
+    text-decoration-color: #512da8;
     margin: 5px;
+    cursor: pointer;
   }
   .link:hover,
   .link:focus,
   .link:active {
-    color: #0070f3;
-    border-color: #0070f3;
+    color: #512da8;
+    border-color: #512da8;
   }
 
 
@@ -43,4 +45,9 @@
     height: 100%;
     display: flex;
     align-items: center; /* Vertically center the links */
+}
+
+.navLinks {
+  display: flex;
+  gap: 1rem; /* Adjust the gap between links as desired */
 }

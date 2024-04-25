@@ -29,7 +29,7 @@
 }
 
 .title a {
-  color: #0070f3;
+  color: #512da8;
   text-decoration: none;
 }
 
@@ -91,22 +91,23 @@
 }
 
 .a {
-  color: #097cff;
+  color: #512da8;
   text-decoration: underline;
+  text-decoration-color: #512da8;
   margin: 5px;
 }
 .a:hover,
 .a:focus,
 .a:active {
-  color: #0070f3;
-  border-color: #0070f3;
+  color: #512da8;
+  border-color: #512da8;
 }
 
 .card:hover,
 .card:focus,
 .card:active {
-  color: #0070f3;
-  border-color: #0070f3;
+  color: #512da8;
+  border-color: #512da8;
 }
 
 .card h2 {

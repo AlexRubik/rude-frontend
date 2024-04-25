@@ -11,23 +11,18 @@ const Navbar = () => {
         { ssr: false }
     );
     return (
+      <>
         <div className={styles.navbar}>
       <nav>
-        <Link href="/" prefetch={true}>
-          <a className={styles.link}>Home</a>
+        <div className={styles.navLinks}>
+        <Link href="/">
+          <h4 className={styles.link}>Home</h4>
         </Link>
-        <Link href="/balances" prefetch={true}>
-          <a className={styles.link}>Balance Tracker</a>
+        <Link href="/balances">
+          <h4 className={styles.link}>Balance Tracker</h4>
         </Link>
-        {/* <a className={styles.link} href='https://github.com/AlexRubik/rude-bot-solana' target="_blank" rel="noopener noreferrer">
-                        GitHub
-                    </a>
-        <a className={styles.link} href='https://discord.gg/6DTGbMNYuA' target="_blank" rel="noopener noreferrer">
-                        Discord
-                    </a>
-                    <a className={styles.link} href='https://rude-bot-org.gitbook.io/' target="_blank" rel="noopener noreferrer">
-                        Documentation
-                    </a> */}
+        </div>
+
                     <div className={styles.navbarRight}>
 
                     <WalletMultiButtonDynamic />
@@ -35,6 +30,7 @@ const Navbar = () => {
 
       </nav>
     </div>
+    </>
     
     );
   };

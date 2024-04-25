@@ -128,7 +128,7 @@ const Home: NextPage<HomeProps> = () => {
 
 
                 <p>Time: {currentTime} UTC</p>
-                <p>SOL Balance: {solBalance}</p>
+                <p hidden={!pubkeyObj}>SOL Balance: {solBalance}</p>
 
 
             </main>
