@@ -7,7 +7,7 @@ import { AtaRecord } from '../types';
 import { fetchAtaRecords, insertNewAtaRecord } from '../apiFunctions';
 import { Connection, PublicKey } from '@solana/web3.js'
 import { Account, getAccount } from '@solana/spl-token'
-import { delay, formatTime, getSolBalance, getUTCTime } from '../utils';
+import { delay, formatTime, getSolBalance, getUTCTime, roundToFourDecimals } from '../utils';
 
 interface Item {
     id: number;
@@ -206,10 +206,10 @@ const Balances: NextPage<HomeProps> = () => {
                 <input className={styles.input} type="text" value={ataInputValue} onChange={handleAtaInputChange} placeholder="Enter your associated token account address" />
                 <input className={styles.input} type="text" value={tokenNameInputValue} onChange={handleTokenNameInputChange} placeholder="Enter the token name" />
                 <button className={styles.button} hidden={pubkeyObj === null || pubkeyObj === undefined || addingToken} onClick={addTokenOnClick}>Add Token</button>
-                <button className={styles.button} hidden={refreshingTokens || pubkeyObj === null || pubkeyObj === undefined} onClick={refreshTokens}>Refresh Tokens</button>
-                <p hidden={!refreshingTokens}>Fetching balances...</p>
                 <p>Time: {currentTime} UTC</p>
                 <p>SOL Balance: {solBalance}</p>
+                <button className={styles.button} hidden={refreshingTokens || pubkeyObj === null || pubkeyObj === undefined} onClick={refreshTokens}>Refresh Tokens</button>
+                <p hidden={!refreshingTokens}>Fetching balances...</p>
 
       <ul>
       <table className={styles.table}>
@@ -223,9 +223,9 @@ const Balances: NextPage<HomeProps> = () => {
                 {ataRecords?.map((item) => (
       <tr key={item.ata}>
         <td title={item.mint_address !== null ? item.mint_address : ''}>{item.mint_name || 'N/A'}</td>
-        <td>{item.daily_starting_bal !== null ? item.daily_starting_bal : 'N/A'}</td>
-        <td>{item.current_bal !== null ? item.current_bal : 'N/A'}</td>
-        <td>{item.difference !== null ? item.difference : 'N/A'}</td>
+        <td>{item.daily_starting_bal !== null ? roundToFourDecimals(item.daily_starting_bal) : 'N/A'}</td>
+        <td>{item.current_bal ? roundToFourDecimals(item.current_bal) : 'N/A'}</td>
+        <td>{item.difference ? roundToFourDecimals(item.difference) : 'N/A'}</td>
       </tr>
     ))}
             </tbody>

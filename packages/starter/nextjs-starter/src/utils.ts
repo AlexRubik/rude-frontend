@@ -28,3 +28,8 @@ export async function getSolBalance(connection: Connection, pubkey: string | Pub
   return balance / 10 ** 9;
    
 }
+
+// function that takes a number and rounds it to 4 decimal places
+export function roundToFourDecimals(num: number): number {
+  return Math.round(num * 10000) / 10000;
+}
