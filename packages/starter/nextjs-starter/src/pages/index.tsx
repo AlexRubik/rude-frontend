@@ -24,19 +24,15 @@ interface Item {
 const Home: NextPage<HomeProps> = () => {
 
     const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=56f5d18f-ce0f-495b-a381-f77fe1e237da', 'confirmed');
-    const connection2 = new Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+    const connection2 = new Connection('https://mainnet.helius-rpc.com/?api-key=00a5355d-b3d8-4780-be65-58e83e1e0132', 'confirmed');
 
 
     const pubkeyObj = useContext(UserContext)
 
         // Define a state variable to hold the input value
-        const [ataInputValue, setAtaInputValue] = useState('');
-        const [tokenNameInputValue, setTokenNameInputValue] = useState('');
-        const [ataRecords, setAtaRecords] = useState<AtaRecord[]>([]);
         const [triggerUseEffect, setTriggerUseEffect] = useState(false);
         const [currentTime, setCurrentTime] = useState(getUTCTime());
         // tokens refreshing bool status
-        const [refreshingTokens, setRefreshingTokens] = useState(false);
         // sol balance
         const [solBalance, setSolBalance] = useState(0);
         
@@ -46,47 +42,33 @@ const Home: NextPage<HomeProps> = () => {
         useEffect(() => {
             (async () => {
 
-                setCurrentTime(getUTCTime());
-                const tempAtaRecords:AtaRecord[] = [];
+                try {
+                    setCurrentTime(getUTCTime());
 
-                await fetchAtaRecords(pubkeyObj?.toBase58()).then((records) => {
-                    setAtaRecords(records);
-                    tempAtaRecords.push(...records);
-                });
-                await delay(700);
-
-
-                // get all atas for the pubkey and then get the balance for each ata and assign it to the ata record current_bal
-                console.log(pubkeyObj?.toBase58());
-                console.log(ataRecords);
-                console.log(tempAtaRecords);
-                if (pubkeyObj !== null && pubkeyObj !== undefined) {
-                    const solBalance = await getSolBalance(connection, pubkeyObj.toBase58());
-                    setSolBalance(solBalance);
-                    console.log(solBalance);
-                    if (ataRecords.length > 0 || tempAtaRecords.length > 0) {
-                        const updatedAtaRecords: AtaRecord[] = [];
-                        // if ataRecords is empty, use tempAtaRecords
-                        const ataRecordsToLoop = ataRecords.length > 0 ? ataRecords : tempAtaRecords;
-                        setRefreshingTokens(true);
-                        for (const ataRecord of ataRecordsToLoop) {
-                            const ataPk = new PublicKey(ataRecord.ata);
-                            await connection.getTokenAccountBalance(ataPk, 'confirmed').then((info) => {
-                                ataRecord.current_bal = info.value.uiAmount;
-                                ataRecord.difference = ataRecord.daily_starting_bal !== null && info.value.uiAmount !== null ? info.value.uiAmount - ataRecord.daily_starting_bal : null;
-                                updatedAtaRecords.push(ataRecord);
-                                
-                            });
-                            await delay(700);
-
-                        }
-                        setAtaRecords(updatedAtaRecords);
-                        setRefreshingTokens(false);
+                    if (!pubkeyObj) {
+                        return;
                     }
 
+                    let solBalance;
+                    let cnx = connection;
+                    let count = 0;
+                    while (solBalance === undefined && count < 6) {
+                        console.log(`Attempt ${count} to get sol balance`);
+                        if (count > 3) {
+                            cnx = connection2;
+                        }
+                    count++;
+                    await delay(800);
+                    solBalance = await getSolBalance(cnx, pubkeyObj);
+                    setSolBalance(solBalance);
+
+                    }
+                    
+                } catch (error) {
+                    console.error(error);
                 }
 
-                
+
             })();
         }, [pubkeyObj, triggerUseEffect]);
     return (

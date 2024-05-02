@@ -65,8 +65,15 @@ const Balances: NextPage<HomeProps> = () => {
 
 
         }
+        const addNativeSolOnClick = async () => {
+            setAddingToken(true);
+            await addToken(true);
+            setAddingToken(false);
+
+
+        }
         // add token function
-        const addToken = async () => {
+        const addToken = async (nativeSol = false) => {
             console.log('Adding ata...');
 
             const alreadyExists = ataRecords.find((record) => record.ata === ataInputValue);
@@ -74,7 +81,7 @@ const Balances: NextPage<HomeProps> = () => {
                 return;
             }
 
-            if (ataInputValue.length > 30 && tokenNameInputValue.length > 0 && tokenNameInputValue.length < 20 && pubkeyObj) {
+            if (!nativeSol && ataInputValue.length > 30 && tokenNameInputValue.length > 0 && tokenNameInputValue.length < 20 && pubkeyObj) {
 
                 const ataPk = new PublicKey(ataInputValue);
                 let ataAcc: Account | null = null;
@@ -138,6 +145,35 @@ const Balances: NextPage<HomeProps> = () => {
                 setTokenNameInputValue('');
                 setAddingToken(false);
                 setTriggerUseEffect(!triggerUseEffect);
+            } else if (nativeSol && pubkeyObj) {
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+                
+                const ataRecord: AtaRecord = {
+                    pubkey_ata: `${pubkeyObj.toBase58()}_SOL`,
+                    pubkey: pubkeyObj.toBase58(),
+                    ata: `SOL_${pubkeyObj.toBase58()}`,
+                    created_at: Date.now(),
+                    updated_at: Date.now(),
+                    daily_starting_bal: null,
+                    weekly_starting_bal: null,
+                    monthly_starting_bal: null,
+                    decimals: null,
+                    mint_address: `SOL_${pubkeyObj.toBase58()}`,
+                    mint_name: 'SOL',
+                    current_bal: null,
+                    difference: null,
+                };
+
+                const response = await insertNewAtaRecord(ataRecord);
+                console.log(response);
+
+                setAtaRecords([...ataRecords, ataRecord]);
+
+                setAtaInputValue('');
+                setTokenNameInputValue('');
+                setAddingToken(false);
+                setTriggerUseEffect(!triggerUseEffect);
             }
         };
 
@@ -169,6 +205,8 @@ const Balances: NextPage<HomeProps> = () => {
                         const ataRecordsToLoop = ataRecords.length > 0 ? ataRecords : tempAtaRecords;
                         setRefreshingTokens(true);
                         for (const ataRecord of ataRecordsToLoop) {
+
+                            if (!ataRecord.ata.startsWith('SOL_')) {
                             const ataPk = new PublicKey(ataRecord.ata);
                             await connection.getTokenAccountBalance(ataPk, 'confirmed').then((info) => {
                                 ataRecord.current_bal = info.value.uiAmount;
@@ -178,7 +216,13 @@ const Balances: NextPage<HomeProps> = () => {
                             });
                             await delay(700);
 
+                        } else {
+                            const solBal = await getSolBalance(connection, pubkeyObj.toBase58());
+                            ataRecord.current_bal = solBal;
+                            ataRecord.difference = ataRecord.daily_starting_bal !== null && solBal !== null ? solBal - ataRecord.daily_starting_bal : null;
+                            updatedAtaRecords.push(ataRecord);
                         }
+                    }
                         setAtaRecords(updatedAtaRecords);
                         setRefreshingTokens(false);
                     }
@@ -206,6 +250,8 @@ const Balances: NextPage<HomeProps> = () => {
                 <input className={styles.input} type="text" value={ataInputValue} onChange={handleAtaInputChange} placeholder="Enter your associated token account address" />
                 <input className={styles.input} type="text" value={tokenNameInputValue} onChange={handleTokenNameInputChange} placeholder="Enter the token name" />
                 <button className={styles.button} hidden={pubkeyObj === null || pubkeyObj === undefined || addingToken} onClick={addTokenOnClick}>Add Token</button>
+                <button className={styles.button} hidden={pubkeyObj === null || pubkeyObj === undefined || addingToken} onClick={addNativeSolOnClick}>Add Native SOL</button>
+
                 <p>Time: {currentTime} UTC</p>
                 <p>SOL Balance: {solBalance}</p>
                 <button className={styles.button} hidden={refreshingTokens || pubkeyObj === null || pubkeyObj === undefined} onClick={refreshTokens}>Refresh Tokens</button>
