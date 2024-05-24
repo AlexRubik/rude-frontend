@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import styles from '../styles/Home.module.css';
 import { UserContext } from '../UserContext';
 import { AtaRecord } from '../types';
@@ -8,6 +8,8 @@ import { fetchAtaRecords, insertNewAtaRecord } from '../apiFunctions';
 import { Connection, PublicKey } from '@solana/web3.js'
 import { Account, getAccount } from '@solana/spl-token'
 import { delay, formatTime, getSolBalance, getUTCTime, roundToFourDecimals } from '../utils';
+import { useRouter } from 'next/router';
+
 
 interface Item {
     id: number;
@@ -22,11 +24,13 @@ interface Item {
 
 const Balances: NextPage<HomeProps> = () => {
 
+    const router = useRouter();
+    const { pubkeyStr } = router.query;
+
     const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=56f5d18f-ce0f-495b-a381-f77fe1e237da', 'confirmed');
     const connection2 = new Connection('https://api.mainnet-beta.solana.com', 'confirmed');
 
 
-    const pubkeyObj = useContext(UserContext)
 
         // Define a state variable to hold the input value
         const [ataInputValue, setAtaInputValue] = useState('');
@@ -40,6 +44,8 @@ const Balances: NextPage<HomeProps> = () => {
         const [addingToken, setAddingToken] = useState(false);
         // sol balance
         const [solBalance, setSolBalance] = useState(0);
+        // use state for pubkeyObj
+        const [pubkeyObj, setPubkeyObj] = useState<PublicKey | null>(useContext(UserContext));
         
 
 
@@ -91,17 +97,18 @@ const Balances: NextPage<HomeProps> = () => {
     
                 while (attempts < maxRetries && !ataAcc) {
                     try {
+                        attempts++;
+                        console.log('Attempt:', attempts);
                         ataAcc = await getAccount(connection, ataPk, 'confirmed');
                         console.log('Account found for mint:', ataAcc.mint.toBase58());
                         if (!ataAcc) {
                             // If ataAcc is still null, try the second connection
-                            console.log('Trying second connection...');
+                            console.log('Trying second connection... for mint:', ataPk.toBase58());
                             ataAcc = await getAccount(connection2, ataPk, 'confirmed');
                             console.log('Account found for mint:', ataAcc.mint.toBase58());
                         }
                     } catch (error) {
                         console.error('Attempt to get account failed:', error);
-                        attempts++;
                         // Wait a bit before retrying
                         console.log('Retrying to get account...');
                         await delay(1000);
@@ -177,6 +184,15 @@ const Balances: NextPage<HomeProps> = () => {
             }
         };
 
+        useEffect(() => {
+            const { pubkeyStr } = router.query;
+        
+            if (pubkeyStr && typeof pubkeyStr === 'string' && pubkeyStr.length > 15) {
+              const pubkey = new PublicKey(pubkeyStr);
+              setPubkeyObj(pubkey);
+            }
+          }, [router.query]);
+
         // console log the pubkeyObj when it changes
         useEffect(() => {
             (async () => {
@@ -184,10 +200,13 @@ const Balances: NextPage<HomeProps> = () => {
                 setCurrentTime(getUTCTime());
                 const tempAtaRecords:AtaRecord[] = [];
 
-                await fetchAtaRecords(pubkeyObj?.toBase58()).then((records) => {
-                    setAtaRecords(records);
-                    tempAtaRecords.push(...records);
-                });
+                if (pubkeyObj) {
+                    await fetchAtaRecords(pubkeyObj?.toBase58()).then((records) => {
+                        setAtaRecords(records);
+                        tempAtaRecords.push(...records);
+                    });
+                }
+
                 await delay(700);
 
 

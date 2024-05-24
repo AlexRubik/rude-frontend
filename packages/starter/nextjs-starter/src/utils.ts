@@ -23,6 +23,7 @@ export async function getSolBalance(connection: Connection, pubkey: string | Pub
   if (typeof pubkey === 'string') {
       pubkey = new PublicKey(pubkey);
   }
+  await delay(3000);
   const balance = await connection.getBalance(pubkey);
   
   return balance / 10 ** 9;
