@@ -93,6 +93,11 @@ const Home: NextPage<HomeProps> = () => {
                         Discord
                     </h2>
                 </a>
+                <a href="https://x.com/solanarbitrage" target="_blank" rel="noopener noreferrer">
+                    <h2>
+                        Twitter
+                    </h2>
+                </a>
 
                 <a href="https://github.com/AlexRubik/rude-bot-solana" target="_blank" rel="noopener noreferrer">
                     <h2>
@@ -105,6 +110,20 @@ const Home: NextPage<HomeProps> = () => {
                         Documentation
                     </h2>
                 </a>
+
+                <a href="https://solscan.io/account/3tZPEagumHvtgBhivFJCmhV9AyhBHGW9VgdsK52i4gwP" target="_blank" rel="noopener noreferrer">
+                    <h2>
+                        On Chain Program 1
+                    </h2>
+                </a>
+
+                <a href="https://solscan.io/account/72FXMcchZS4JRgQ62pKweYhHAkFA19PFoaqAUhWZmEFU" target="_blank" rel="noopener noreferrer">
+                    <h2>
+                        On Chain Program 2
+                    </h2>
+                </a>
+
+                
                 </div>
 
 
