@@ -46,6 +46,8 @@ const Balances: NextPage<HomeProps> = () => {
         const [solBalance, setSolBalance] = useState(0);
         // use state for pubkeyObj
         const [pubkeyObj, setPubkeyObj] = useState<PublicKey | null>(useContext(UserContext));
+        // read only bool
+        const [readOnly, setReadOnly] = useState(false);
         
 
 
@@ -189,7 +191,11 @@ const Balances: NextPage<HomeProps> = () => {
         
             if (pubkeyStr && typeof pubkeyStr === 'string' && pubkeyStr.length > 15) {
               const pubkey = new PublicKey(pubkeyStr);
+              setReadOnly(true);
               setPubkeyObj(pubkey);
+            }
+            if (!pubkeyStr && pubkeyObj) {
+                setReadOnly(false);
             }
           }, [router.query]);
 
@@ -265,11 +271,12 @@ const Balances: NextPage<HomeProps> = () => {
                 <p className={styles.description}>
                    <code className={styles.code}>Token Balance Tracker</code>
                 </p>
-                <p>Start tracking balances for: {pubkeyObj?.toBase58()}</p>
-                <input className={styles.input} type="text" value={ataInputValue} onChange={handleAtaInputChange} placeholder="Enter your associated token account address" />
-                <input className={styles.input} type="text" value={tokenNameInputValue} onChange={handleTokenNameInputChange} placeholder="Enter the token name" />
-                <button className={styles.button} hidden={pubkeyObj === null || pubkeyObj === undefined || addingToken} onClick={addTokenOnClick}>Add Token</button>
-                <button className={styles.button} hidden={pubkeyObj === null || pubkeyObj === undefined || addingToken} onClick={addNativeSolOnClick}>Add Native SOL</button>
+                <p>Tracking balances for: {pubkeyObj?.toBase58()}</p>
+                <a className={styles.a} href={`https://solscan.io/account/${pubkeyObj?.toBase58()}`} target="_blank" rel="noopener noreferrer">Solscan</a>
+                <input className={styles.input} hidden={readOnly} type="text" value={ataInputValue} onChange={handleAtaInputChange} placeholder="Enter your associated token account address" />
+                <input className={styles.input} hidden={readOnly} type="text" value={tokenNameInputValue} onChange={handleTokenNameInputChange} placeholder="Enter the token name" />
+                <button className={styles.button} hidden={readOnly || pubkeyObj === null || pubkeyObj === undefined || addingToken} onClick={addTokenOnClick}>Add Token</button>
+                <button className={styles.button} hidden={readOnly || pubkeyObj === null || pubkeyObj === undefined || addingToken} onClick={addNativeSolOnClick}>Add Native SOL</button>
 
                 <p>Time: {currentTime} UTC</p>
                 <p>SOL Balance: {solBalance}</p>
