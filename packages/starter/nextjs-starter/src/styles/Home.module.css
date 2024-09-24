@@ -158,6 +158,23 @@
     text-align: center;
   }
 
+  .lstContent {
+    display: block;
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    .pre {
+      font-size: 0.70rem;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .apys {
+      font-size: 0.6rem;
+    }
+  }
+
 
 
 

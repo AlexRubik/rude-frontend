@@ -12,7 +12,7 @@ const SortedApyData: React.FC = () => {
   const [data, setData] = useState<ApyData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [output, setOutput] = useState<string>('Loading...');
+  const [epochOutput, setOutput] = useState<string>('Loading...');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -80,17 +80,16 @@ const SortedApyData: React.FC = () => {
 
     <div className={styles.container}>
         <main className={styles.main}>
-            <header className="bg-gray-800 text-white p-4">
-                <h1 className="text-2xl">Sanctum LSTs APY Data</h1>
-            </header>
+                <h2>Sanctum LSTs APY Data</h2>
+
 
             <div className="p-4">
-                <pre className="bg-gray-100 p-4 rounded-md overflow-auto">
-                    {output}
+                <pre className={styles.pre}>
+                    {epochOutput}
                 </pre>
             </div>
     <div>
-      <pre className="bg-gray-100 p-4 rounded-md overflow-auto">
+      <pre className={styles.apys}>
         {JSON.stringify(sortedData, null, 2)}
       </pre>
     </div>
