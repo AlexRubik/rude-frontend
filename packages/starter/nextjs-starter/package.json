@@ -33,6 +33,7 @@
         "lint": "prettier --check 'src/{*,**/*}.{ts,tsx,js,jsx,json}' && eslint && next lint"
     },
     "dependencies": {
+        "@iarna/toml": "^2.2.5",
         "@solana/spl-token": "^0.4.3",
         "@solana/wallet-adapter-base": "^0.9.23",
         "@solana/wallet-adapter-react": "0.15.35",
@@ -40,6 +41,7 @@
         "@solana/wallet-adapter-wallets": "0.19.32",
         "@types/pg": "^8.11.4",
         "next": "^12.3.4",
+        "node-fetch": "^3.3.2",
         "pg": "^8.11.3",
         "react": "^18.2.0",
         "react-dom": "^18.2.0"
