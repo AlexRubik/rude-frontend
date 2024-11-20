@@ -70,49 +70,54 @@ const TradingCalc = () => {
     <div className={styles.container}>
       <h1 className={styles.title}>Trading Calculator</h1>
       <div className={styles.inputGroup}>
-        <label className={styles.label}>
-          Account Size (USD):
-          <input
-            className={styles.input}
-            type="text"
-            value={accountSize}
-            onChange={handleInputChange(setAccountSize)}
-          />
-        </label>
-      </div>
-      <div className={styles.inputGroup}>
-        <label className={styles.label}>
-          Risk % of Account:
-          <input
-            className={styles.input}
-            type="text"
-            value={riskPercent}
-            onChange={handleInputChange(setRiskPercent)}
-          />
-        </label>
-      </div>
-      <div className={styles.inputGroup}>
-        <label className={styles.label}>
-          Stop Loss % from Entry:
-          <input
-            className={styles.input}
-            type="text"
-            value={stopLossPercent}
-            onChange={handleInputChange(setStopLossPercent)}
-          />
-        </label>
-      </div>
-      <div className={styles.inputGroup}>
-        <label className={styles.label}>
-          Margin Available (USD):
-          <input
-            className={styles.input}
-            type="text"
-            value={marginAvailable}
-            onChange={handleInputChange(setMarginAvailable)}
-          />
-        </label>
-      </div>
+  <label className={styles.label}>
+    Account Size (USD):
+    <input
+      className={styles.input}
+      type="number" // Use type="number" for numeric keyboard
+      inputMode="decimal" // Ensures decimal numbers are allowed
+      value={accountSize}
+      onChange={handleInputChange(setAccountSize)}
+    />
+  </label>
+</div>
+<div className={styles.inputGroup}>
+  <label className={styles.label}>
+    Risk % of Account:
+    <input
+      className={styles.input}
+      type="number" // Use type="number" for numeric keyboard
+      inputMode="decimal" // Ensures decimal numbers are allowed
+      value={riskPercent}
+      onChange={handleInputChange(setRiskPercent)}
+    />
+  </label>
+</div>
+<div className={styles.inputGroup}>
+  <label className={styles.label}>
+    Stop Loss % from Entry:
+    <input
+      className={styles.input}
+      type="number" // Use type="number" for numeric keyboard
+      inputMode="decimal" // Ensures decimal numbers are allowed
+      value={stopLossPercent}
+      onChange={handleInputChange(setStopLossPercent)}
+    />
+  </label>
+</div>
+<div className={styles.inputGroup}>
+  <label className={styles.label}>
+    Margin Available (USD):
+    <input
+      className={styles.input}
+      type="number" // Use type="number" for numeric keyboard
+      inputMode="decimal" // Ensures decimal numbers are allowed
+      value={marginAvailable}
+      onChange={handleInputChange(setMarginAvailable)}
+    />
+  </label>
+</div>
+
       <div className={styles.buttonGroup}>
         <button className={styles.calculateButton} onClick={calculateTrade}>
           {buttonText}
