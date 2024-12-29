@@ -111,6 +111,12 @@ const Home: NextPage<HomeProps> = () => {
                     </h2>
                 </a>
 
+                <a href="/source-code">
+                    <h2>
+                        Purchase Source Code
+                    </h2>
+                </a>
+
                 <a href="https://solscan.io/account/3tZPEagumHvtgBhivFJCmhV9AyhBHGW9VgdsK52i4gwP" target="_blank" rel="noopener noreferrer">
                     <h2>
                         On Chain Program 1
