@@ -51,7 +51,7 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
     if (!lastUpdateTime) return '';
     const now = Math.floor(Date.now() / 1000);
     const diffInMinutes = Math.floor((now - lastUpdateTime) / 60);
-    return `Yields updated ${diffInMinutes} minute${diffInMinutes !== 1 ? 's' : ''} ago`;
+    return `Updated ${diffInMinutes} minute${diffInMinutes !== 1 ? 's' : ''} ago`;
   };
 
   // New function to reorganize data by token
@@ -128,7 +128,8 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
       {show24hrApyModal && (
         <div className={styles.rolling24hrModalOverlay} onClick={() => setShow24hrApyModal(false)}>
           <div className={styles.rolling24hrModal} onClick={e => e.stopPropagation()}>
-            <p>Rolling 24hr data updated every hour</p>
+            <p>Rolling 24hr data updated every hour.</p>
+            <p>It is an average of the last 24 hours of data.</p>
             <button className={styles.rolling24hrCloseButton} onClick={() => setShow24hrApyModal(false)}>×</button>
           </div>
         </div>
@@ -160,8 +161,8 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
               {data.map((item) => (
                 <tr 
                   key={`${token}-${item.protocol}`}
-                  className={item.protocol === 'Top LSTs' ? styles.tooltipElementHelp : ''}
-                  title={item.protocol === 'Top LSTs' ? 'This data is updated from Sanctum every 24hrs' : ''}
+                  className={`${item.protocol === 'Top LSTs' ? styles.grayedOut : ''} ${item.protocol === 'Top LSTs' ? styles.tooltipElementHelp : ''}`}
+                  title={item.protocol === 'Top LSTs' ? 'This data is updated from Sanctum every 24hrs so it is not like the rest of the data but it is similar enough to be useful for comparison' : ''}
                 >
                   <td>
                     {item.protocol === 'Top LSTs' ? (
@@ -188,7 +189,7 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
                     )}
                   </td>
                   <td>{item.apy.toFixed(2)}%</td>
-                  <td className={item.protocol === 'Top LSTs' ? styles.grayedOut : ''}>
+                  <td>
                     {item.latestApy.toFixed(2)}%
                   </td>
                 </tr>
