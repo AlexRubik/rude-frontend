@@ -16,7 +16,6 @@ const Navbar = () => {
       <>
         <div className={styles.navbar}>
           <nav>
-            {/* Hamburger menu button */}
             <button 
               className={styles.hamburger} 
               onClick={() => setIsOpen(!isOpen)}
@@ -24,7 +23,6 @@ const Navbar = () => {
               ☰
             </button>
 
-            {/* Regular and mobile nav links */}
             <div className={`${styles.navLinks} ${isOpen ? styles.showMobile : ''}`}>
               <Link href="/">
                 <h4 className={styles.link}>Home</h4>
@@ -32,8 +30,14 @@ const Navbar = () => {
               <Link href="/balances">
                 <h4 className={styles.link}>Balance Tracker</h4>
               </Link>
-              <Link href="/source-code">
-                <h4 className={styles.link}>Source Code</h4>
+              <Link href="/lsts">
+                <h4 className={styles.link}>LSTs</h4>
+              </Link>
+              <Link href="/trading-calc">
+                <h4 className={styles.link}>Trading Calc</h4>
+              </Link>
+              <Link href="/apy-dashboard">
+                <h4 className={styles.link}>APY Dashboard</h4>
               </Link>
             </div>
 

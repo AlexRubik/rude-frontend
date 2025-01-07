@@ -35,6 +35,7 @@ const Home: NextPage<HomeProps> = () => {
         // tokens refreshing bool status
         // sol balance
         const [solBalance, setSolBalance] = useState(0);
+        const [isDropdownOpen, setIsDropdownOpen] = useState(false);
         
 
 
@@ -74,79 +75,54 @@ const Home: NextPage<HomeProps> = () => {
     return (
         <div className={styles.container}>
             <Head>
-                <title>Solana Arbitrage</title>
+                <title>Rude Labs</title>
                 <meta name="description" content="Everything you need to arbitrage on the Solana blockchain." />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
             <main className={styles.main}>
-
-                <div className={styles.mobileLinks}>
-
-                <a href="https://www.youtube.com/watch?v=RNhc0KRa2AI" target="_blank" rel="noopener noreferrer">
-                    <h2>
-                        Beginner Tutorial
+                <div className={styles.dropdownContainer}>
+                    <h2 
+                        className={styles.dropdownTitle}
+                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    >
+                        Arbitrage Bot {isDropdownOpen ? '▼' : '▶'}
                     </h2>
-                </a>
-                <a href="https://discord.gg/6DTGbMNYuA" target="_blank" rel="noopener noreferrer">
-                    <h2>
-                        Discord
-                    </h2>
-                </a>
-                <a href="https://x.com/solanarbitrage" target="_blank" rel="noopener noreferrer">
-                    <h2>
-                        Twitter
-                    </h2>
-                </a>
-
-                <a href="https://github.com/AlexRubik/rude-bot-solana" target="_blank" rel="noopener noreferrer">
-                    <h2>
-                        GitHub
-                    </h2>
-                </a>
-
-                <a href="https://rude-bot-org.gitbook.io/" target="_blank" rel="noopener noreferrer">
-                    <h2>
-                        Documentation
-                    </h2>
-                </a>
-
-                <a href="/source-code">
-                    <h2>
-                        Purchase Source Code
-                    </h2>
-                </a>
-
-                <a href="https://solscan.io/account/3tZPEagumHvtgBhivFJCmhV9AyhBHGW9VgdsK52i4gwP" target="_blank" rel="noopener noreferrer">
-                    <h2>
-                        On Chain Program 1
-                    </h2>
-                </a>
-
-                <a href="https://solscan.io/account/72FXMcchZS4JRgQ62pKweYhHAkFA19PFoaqAUhWZmEFU" target="_blank" rel="noopener noreferrer">
-                    <h2>
-                        On Chain Program 2
-                    </h2>
-                </a>
-
-                
+                    
+                    {isDropdownOpen && (
+                        <div className={styles.dropdownContent}>
+                            <a href="https://www.youtube.com/watch?v=RNhc0KRa2AI" target="_blank" rel="noopener noreferrer">
+                                <h2>Beginner Tutorial</h2>
+                            </a>
+                            <a href="https://discord.gg/6DTGbMNYuA" target="_blank" rel="noopener noreferrer">
+                                <h2>Discord</h2>
+                            </a>
+                            <a href="https://x.com/solanarbitrage" target="_blank" rel="noopener noreferrer">
+                                <h2>Twitter</h2>
+                            </a>
+                            <a href="https://github.com/AlexRubik/rude-bot-solana" target="_blank" rel="noopener noreferrer">
+                                <h2>GitHub</h2>
+                            </a>
+                            <a href="https://rude-bot-org.gitbook.io/" target="_blank" rel="noopener noreferrer">
+                                <h2>Documentation</h2>
+                            </a>
+                            <a href="/source-code">
+                                <h2>Purchase Source Code</h2>
+                            </a>
+                            <a href="https://solscan.io/account/3tZPEagumHvtgBhivFJCmhV9AyhBHGW9VgdsK52i4gwP" target="_blank" rel="noopener noreferrer">
+                                <h2>On Chain Program 1</h2>
+                            </a>
+                            <a href="https://solscan.io/account/72FXMcchZS4JRgQ62pKweYhHAkFA19PFoaqAUhWZmEFU" target="_blank" rel="noopener noreferrer">
+                                <h2>On Chain Program 2</h2>
+                            </a>
+                        </div>
+                    )}
                 </div>
-
-
 
                 <p>Time: {currentTime} UTC</p>
                 <p hidden={!pubkeyObj}>SOL Balance: {solBalance}</p>
-
-
             </main>
-
-
-            <div>
-
-    </div>
         </div>
-
-        
     );
 };
 

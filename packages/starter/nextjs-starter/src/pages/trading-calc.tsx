@@ -69,6 +69,14 @@ const TradingCalc = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Trading Calculator</h1>
+      <a 
+        href="https://x.com/Trader_Hamilton/status/1869813756336976087"
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.howToUse}
+      >
+        How to Use
+      </a>
       <div className={styles.inputGroup}>
   <label className={styles.label}>
     Account Size (USD):
