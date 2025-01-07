@@ -123,6 +123,7 @@ interface ProtocolApy {
   tokens: {
     token_ticker: string;
     avg_apy: number;
+    latest_apy: number;
   }[];
 }
 
@@ -141,14 +142,23 @@ export async function getLast24HourProtocolApys(): Promise<ApyResponse> {
       WHERE unix_timestamp >= $1
     )
     SELECT 
-      protocol_name,
-      token_ticker,
-      AVG(apy) as avg_apy,
+      h.protocol_name,
+      h.token_ticker,
+      (
+        SELECT apy 
+        FROM lending_apys 
+        WHERE protocol_name = h.protocol_name 
+        AND token_ticker = h.token_ticker 
+        AND unix_timestamp >= (SELECT last_update FROM latest_time) - 60
+        ORDER BY unix_timestamp DESC
+        LIMIT 1
+      ) as latest_apy,
+      AVG(h.apy) as avg_apy,
       (SELECT last_update FROM latest_time) as last_update_time
-    FROM lending_apys
-    WHERE unix_timestamp >= $1
-    GROUP BY protocol_name, token_ticker
-    ORDER BY protocol_name, token_ticker
+    FROM lending_apys h
+    WHERE h.unix_timestamp >= $1
+    GROUP BY h.protocol_name, h.token_ticker
+    ORDER BY h.protocol_name, h.token_ticker
   `;
 
   try {
@@ -170,9 +180,11 @@ export async function getLast24HourProtocolApys(): Promise<ApyResponse> {
       
       protocolMap.get(row.protocol_name)?.tokens.push({
         token_ticker: row.token_ticker,
-        avg_apy: Number(row.avg_apy)
+        avg_apy: Number(row.avg_apy),
+        latest_apy: Number(row.latest_apy)
       });
     });
+
     
     return {
       protocols: Array.from(protocolMap.values()),

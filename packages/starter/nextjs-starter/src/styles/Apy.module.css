@@ -89,5 +89,48 @@
     position: relative;
     cursor: help;
   }
+
+.grayedOut {
+  opacity: 0.25;
+}
+
+.rolling24hrModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.rolling24hrModal {
+  background-color: #1a1a1a;
+  padding: 2rem;
+  border-radius: 8px;
+  position: relative;
+  max-width: 500px;
+  margin: 20px;
+  color: white;
+}
+
+.rolling24hrCloseButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0 8px;
+}
+
+.rolling24hrCloseButton:hover {
+  color: white;
+}
     
   

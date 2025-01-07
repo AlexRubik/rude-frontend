@@ -8,6 +8,7 @@ type ApyData = {
   tokens: {
     token_ticker: string;
     avg_apy: number;
+    latest_apy: number;
   }[];
 };
 
@@ -18,12 +19,19 @@ interface DashboardProps {
   };
 }
 
+type TableData = {
+  protocol: string;
+  apy: number;
+  latestApy: number;
+};
+
 const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
   const [apyData, setApyData] = useState<ApyData[]>(initialData.data);
   const [lstAverage, setLstAverage] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdateTime, setLastUpdateTime] = useState<number | null>(initialData.lastUpdateTime);
+  const [show24hrApyModal, setShow24hrApyModal] = useState(false);
 
   useEffect(() => {
     const fetchSanctumData = async () => {
@@ -48,7 +56,7 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
 
   // New function to reorganize data by token
   const getTokenTables = () => {
-    const tokenMap = new Map<string, { protocol: string; apy: number }[]>();
+    const tokenMap = new Map<string, { protocol: string; apy: number; latestApy: number }[]>();
     
     apyData.forEach((protocol) => {
       protocol.tokens.forEach((token) => {
@@ -58,33 +66,34 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
         tokenMap.get(token.token_ticker)?.push({
           protocol: protocol.protocol_name,
           apy: token.avg_apy,
+          latestApy: token.latest_apy,
         });
       });
     });
 
     return Array.from(tokenMap.entries()).map(([token, data]) => ({
       token,
-      data: data.sort((a, b) => b.apy - a.apy), // Sort by APY descending
+      data: data.sort((a, b) => b.apy - a.apy),
     }));
   };
 
   const getTokenTablesWithLst = () => {
     const tables = getTokenTables();
     
-    // Find the SOL table and add the LST average, then sort by APY
     return tables.map(table => {
       if (table.token === 'SOL' && lstAverage !== null) {
-        return {
+        const tableWithLst = {
           ...table,
           data: [
-            { protocol: 'Top LSTs', apy: lstAverage },
+            { protocol: 'Top LSTs', apy: lstAverage, latestApy: lstAverage },
             ...table.data
-          ].sort((a, b) => b.apy - a.apy) // Sort by APY descending
+          ].sort((a, b) => b.apy - a.apy)
         };
+        return tableWithLst;
       }
       return {
         ...table,
-        data: table.data.sort((a, b) => b.apy - a.apy) // Sort all tables by APY descending
+        data: table.data.sort((a, b) => b.apy - a.apy)
       };
     });
   };
@@ -116,6 +125,15 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
 
   return (
     <div className={styles.dashboardContainer}>
+      {show24hrApyModal && (
+        <div className={styles.rolling24hrModalOverlay} onClick={() => setShow24hrApyModal(false)}>
+          <div className={styles.rolling24hrModal} onClick={e => e.stopPropagation()}>
+            <p>Rolling 24hr data updated every hour</p>
+            <button className={styles.rolling24hrCloseButton} onClick={() => setShow24hrApyModal(false)}>×</button>
+          </div>
+        </div>
+      )}
+
       <h1 className={styles.title}>Lending APY Dashboard</h1>
       <p className={styles.updateTime}>{getTimeSinceUpdate()}</p>
       
@@ -127,19 +145,24 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
               <tr>
                 <th>Protocol</th>
                 <th>
-                  24hr APY (%) 
                   <span 
-                    className={`${styles.infoIcon} ${styles.tooltipElementHelp}`}
-                    title="Updated every hour"
+                    className={`${styles.tooltipElement} ${styles.clickable}`} 
+                    title="Rolling 24hr data updated every hour"
+                    onClick={() => setShow24hrApyModal(true)}
                   >
-                    ⓘ
+                    24hr APY (%)
                   </span>
                 </th>
+                <th>Latest APY (%)</th>
               </tr>
             </thead>
             <tbody>
               {data.map((item) => (
-                <tr key={`${token}-${item.protocol}`}>
+                <tr 
+                  key={`${token}-${item.protocol}`}
+                  className={item.protocol === 'Top LSTs' ? styles.tooltipElementHelp : ''}
+                  title={item.protocol === 'Top LSTs' ? 'This data is updated from Sanctum every 24hrs' : ''}
+                >
                   <td>
                     {item.protocol === 'Top LSTs' ? (
                       <a 
@@ -165,6 +188,9 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
                     )}
                   </td>
                   <td>{item.apy.toFixed(2)}%</td>
+                  <td className={item.protocol === 'Top LSTs' ? styles.grayedOut : ''}>
+                    {item.latestApy.toFixed(2)}%
+                  </td>
                 </tr>
               ))}
             </tbody>
