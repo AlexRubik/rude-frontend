@@ -65,7 +65,7 @@
 
 .protocolLink:hover {
   color: #00ffff;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .infoIcon {
@@ -131,6 +131,18 @@
 
 .rolling24hrCloseButton:hover {
   color: white;
+}
+
+.linkIcon {
+  font-size: 0.8em;
+  margin-left: 4px;
+  opacity: 0.7;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.protocolLink:hover .linkIcon {
+  opacity: 1;
 }
     
   

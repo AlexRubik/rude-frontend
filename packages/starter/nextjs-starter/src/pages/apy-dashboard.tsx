@@ -106,7 +106,8 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
       'Kam_alt': 'https://app.kamino.finance/',
       'Kamino_jlp': 'https://app.kamino.finance/',
       'Marginfi': 'https://app.marginfi.com/',
-      'Solend': 'https://save.finance/dashboard'
+      'Solend': 'https://save.finance/dashboard',
+      'Carrot': 'https://use.deficarrot.com/'
     };
     return links[protocolName] || null;
   };
@@ -162,7 +163,7 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
                 <tr 
                   key={`${token}-${item.protocol}`}
                   className={`${item.protocol === 'Top LSTs' ? styles.grayedOut : ''} ${item.protocol === 'Top LSTs' ? styles.tooltipElementHelp : ''}`}
-                  title={item.protocol === 'Top LSTs' ? 'This data is updated from Sanctum every 24hrs so it is not like the rest of the data but it is similar enough to be useful for comparison' : ''}
+                  title={item.protocol === 'Top LSTs' ? 'This data is updated from Sanctum every 24hrs so it is not exactly like the rest of the data in the table but it is similar enough to be useful for comparison' : ''}
                 >
                   <td>
                     {item.protocol === 'Top LSTs' ? (
@@ -173,7 +174,7 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
                         className={`${styles.protocolLink} ${styles.tooltipElement}`}
                         title="Sort LSTs by APY at Sanctum"
                       >
-                        {item.protocol}
+                        {item.protocol} <span className={styles.linkIcon}>↗</span>
                       </a>
                     ) : getProtocolLink(item.protocol) ? (
                       <a 
@@ -182,7 +183,7 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
                         rel="noopener noreferrer"
                         className={styles.protocolLink}
                       >
-                        {item.protocol}
+                        {item.protocol} <span className={styles.linkIcon}>↗</span>
                       </a>
                     ) : (
                       item.protocol
