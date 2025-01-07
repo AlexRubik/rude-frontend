@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { NextPage } from 'next';
+import { NextPage, GetServerSideProps } from 'next';
 import styles from '../styles/Apy.module.css';
 import { fetchSanctumApys, calculateTop5Average } from '../utils';
 
@@ -11,38 +11,32 @@ type ApyData = {
   }[];
 };
 
-const ApyDashboard: NextPage = () => {
-  const [apyData, setApyData] = useState<ApyData[]>([]);
+interface DashboardProps {
+  initialData: {
+    data: ApyData[];
+    lastUpdateTime: number;
+  };
+}
+
+const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
+  const [apyData, setApyData] = useState<ApyData[]>(initialData.data);
   const [lstAverage, setLstAverage] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [lastUpdateTime, setLastUpdateTime] = useState<number | null>(null);
+  const [lastUpdateTime, setLastUpdateTime] = useState<number | null>(initialData.lastUpdateTime);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchSanctumData = async () => {
       try {
-        const response = await fetch('/api/apyData');
-        const result = await response.json();
-        
-        if (result.success) {
-          setApyData(result.data);
-          setLastUpdateTime(result.lastUpdateTime);
-        } else {
-          setError(result.error || 'Failed to fetch APY data');
-        }
-
-        // Fetch Sanctum LST data
         const sanctumData = await fetchSanctumApys();
         const top5Data = calculateTop5Average(sanctumData.apys);
         setLstAverage(top5Data.averageApy * 100);
       } catch (err) {
-        setError('Failed to fetch APY data');
-      } finally {
-        setLoading(false);
+        setError('Failed to fetch LST data');
       }
     };
 
-    fetchData();
+    fetchSanctumData();
   }, []);
 
   const getTimeSinceUpdate = () => {
@@ -179,6 +173,28 @@ const ApyDashboard: NextPage = () => {
       ))}
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/apyData`);
+    const initialData = await response.json();
+
+    return {
+      props: {
+        initialData
+      }
+    };
+  } catch (error) {
+    return {
+      props: {
+        initialData: {
+          data: [],
+          lastUpdateTime: null
+        }
+      }
+    };
+  }
 };
 
 export default ApyDashboard; 
