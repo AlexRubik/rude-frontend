@@ -78,3 +78,51 @@ export async function createUrlFromToml() {
   console.log('Generated URL:', fullUrl);
   return fullUrl;
 }
+
+export type SanctumApyData = {
+  apys: Record<string, number>;
+  errs?: Record<string, { message: string | null; code: string }>;
+};
+
+export async function fetchSanctumApys(): Promise<SanctumApyData> {
+  try {
+    const sanctumUrl = await createUrlFromToml();
+    const response = await fetch(sanctumUrl);
+    
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    
+    const data: SanctumApyData = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching Sanctum APYs:', error);
+    throw error;
+  }
+}
+
+export type Top5ApyResult = {
+  averageApy: number;
+  protocols: string[];
+};
+
+export function calculateTop5Average(apys: Record<string, number>): Top5ApyResult {
+  // Convert the record to array of [protocol, apy] pairs
+  const apyEntries = Object.entries(apys);
+  
+  // Sort by APY in descending order
+  const sortedApys = apyEntries.sort(([, a], [, b]) => b - a);
+  
+  // Get top 5 entries
+  const top5 = sortedApys.slice(0, 5);
+  
+  // Calculate average
+  const sum = top5.reduce((acc, [, apy]) => acc + apy, 0);
+  const average = top5.length > 0 ? sum / top5.length : 0;
+  
+  return {
+    averageApy: roundToFourDecimals(average),
+    protocols: top5.map(([protocol]) => protocol)
+  };
+}
+

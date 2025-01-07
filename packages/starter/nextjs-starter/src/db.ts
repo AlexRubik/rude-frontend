@@ -117,3 +117,72 @@ export async function updateMonthlyStartingBal(pubkey: string, ata: string, mont
     `;
     await pool.query(query);
 }
+
+interface ProtocolApy {
+  protocol_name: string;
+  tokens: {
+    token_ticker: string;
+    avg_apy: number;
+  }[];
+}
+
+interface ApyResponse {
+  protocols: ProtocolApy[];
+  lastUpdateTime: number;
+}
+
+export async function getLast24HourProtocolApys(): Promise<ApyResponse> {
+  const oneDayAgo = Math.floor(Date.now() / 1000) - (24 * 60 * 60);
+  
+  const query = `
+    WITH latest_time AS (
+      SELECT MAX(unix_timestamp) as last_update
+      FROM lending_apys
+      WHERE unix_timestamp >= $1
+    )
+    SELECT 
+      protocol_name,
+      token_ticker,
+      AVG(apy) as avg_apy,
+      (SELECT last_update FROM latest_time) as last_update_time
+    FROM lending_apys
+    WHERE unix_timestamp >= $1
+    GROUP BY protocol_name, token_ticker
+    ORDER BY protocol_name, token_ticker
+  `;
+
+  try {
+    const { rows } = await pool.query(query, [oneDayAgo]);
+    
+    // Group results by protocol
+    const protocolMap = new Map<string, ProtocolApy>();
+    let lastUpdateTime = 0;
+    
+    rows.forEach(row => {
+      lastUpdateTime = row.last_update_time;
+      
+      if (!protocolMap.has(row.protocol_name)) {
+        protocolMap.set(row.protocol_name, {
+          protocol_name: row.protocol_name,
+          tokens: []
+        });
+      }
+      
+      protocolMap.get(row.protocol_name)?.tokens.push({
+        token_ticker: row.token_ticker,
+        avg_apy: Number(row.avg_apy)
+      });
+    });
+    
+    return {
+      protocols: Array.from(protocolMap.values()),
+      lastUpdateTime
+    };
+  } catch (err) {
+    console.error('Error fetching 24h protocol APYs:', err);
+    return {
+      protocols: [],
+      lastUpdateTime: 0
+    };
+  }
+}
