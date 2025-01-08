@@ -223,3 +223,94 @@
     margin: 0;
     font-size: 1.1rem;
 }
+
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #00ffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.apyTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.apyTable th,
+.apyTable td {
+  padding: 12px 20px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.apyTable th {
+  background: rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+  color: #00ffff;
+}
+
+.apyTable tr:hover {
+  background: rgba(0, 255, 255, 0.05);
+}
+
+.errors {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(255, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.error {
+  margin: 8px 0;
+  color: #ff6b6b;
+}
+
+.error strong {
+  margin-right: 8px;
+}
+
+.tokenLink {
+  color: #ffffff;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.tokenLink:hover {
+  color: #00ffff;
+}
+
+.updateNote {
+  text-align: center;
+  color: #888;
+  font-size: 0.9em;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+.sanctumLink {
+  color: #00ffff;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.sanctumLink:hover {
+  opacity: 0.8;
+}

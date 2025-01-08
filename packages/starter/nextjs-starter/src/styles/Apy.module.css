@@ -218,5 +218,27 @@
 .updateInfoCloseButton:hover {
   color: white;
 }
+
+.luloCredit {
+  color: #888;
+  font-size: 0.9em;
+  text-decoration: none;
+  margin-left: auto;
+  transition: color 0.2s ease;
+}
+
+.luloCredit:hover {
+  color: #00ffff;
+}
+
+.titleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
     
   

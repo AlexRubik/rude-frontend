@@ -60,42 +60,87 @@ const SortedApyData: React.FC = () => {
     fetchData();
   }, []);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!data) return <div>No data available</div>;
+  const formatApyData = (data: ApyData | null) => {
+    if (!data || !data.apys) return null;
 
-  const sortedApys = Object.entries(data.apys)
-    .sort(([, a], [, b]) => b - a)
-    .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+    const sortedApys = Object.entries(data.apys)
+      .map(([token, apy]) => ({ token, apy }))
+      .sort((a, b) => b.apy - a.apy);
 
-  const sortedData: ApyData = {
-    apys: sortedApys,
-    errs: data.errs
+    return (
+      <div className={styles.apyList}>
+        <table className={styles.apyTable}>
+          <thead>
+            <tr>
+              <th>Token</th>
+              <th>APY (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedApys.map(({ token, apy }) => (
+              <tr key={token}>
+                <td>
+                  <a 
+                    href={`https://solscan.io/token/${token}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.tokenLink}
+                  >
+                    {token.slice(0, 4)}...{token.slice(-4)} ↗
+                  </a>
+                </td>
+                <td>{(apy * 100).toFixed(2)}%</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {data.errs && Object.keys(data.errs).length > 0 && (
+          <div className={styles.errors}>
+            <h3>Errors:</h3>
+            {Object.entries(data.errs).map(([token, error]) => (
+              <div key={token} className={styles.error}>
+                <strong>{token}:</strong> {error.message || error.code}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
   };
 
-
-
+  if (error) return <div>Error: {error}</div>;
 
   return (
-
     <div className={styles.container}>
-        <main className={styles.main}>
-                <h2>Sanctum LSTs APY Data</h2>
-
-
-            <div className="p-4">
-                <pre className={styles.pre}>
-                    {epochOutput}
-                </pre>
+      <main className={styles.main}>
+        <h2>Sanctum LSTs APY Data</h2>
+        <div className="p-4">
+          <pre className={styles.pre}>
+            {epochOutput}
+          </pre>
+          <div className={styles.updateNote}>
+            Data is updated every epoch by{' '}
+            <a 
+              href="https://app.sanctum.so/lsts"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.sanctumLink}
+            >
+              Sanctum ↗
+            </a>
+          </div>
+        </div>
+        <div>
+          {isLoading ? (
+            <div className={styles.spinnerContainer}>
+              <div className={styles.spinner}></div>
             </div>
-    <div>
-      <pre className={styles.apys}>
-        {JSON.stringify(sortedData, null, 2)}
-      </pre>
+          ) : (
+            formatApyData(data)
+          )}
+        </div>
+      </main>
     </div>
-    </main>
-    </div>
-    
   );
 };
 

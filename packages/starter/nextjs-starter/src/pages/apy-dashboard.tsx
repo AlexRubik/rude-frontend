@@ -186,6 +186,14 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
             ↻
           </button>
         </h1>
+        <a 
+          href="https://lulo.fi"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.luloCredit}
+        >
+          Thanks to Lulo for aggregating most of this data ↗
+        </a>
       </div>
       <p className={styles.updateTime}>
         {getTimeSinceUpdate()}

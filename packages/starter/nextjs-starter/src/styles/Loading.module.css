@@ -1,27 +1,3 @@
-html,
-
-
-* {
-  box-sizing: border-box;
-}
-
-
-
-/* Set basic font and background-color for dark mode */
-body {
-  color: #E0E0E0; /* Light gray text color */
-  background-color: #212121; /* Very dark background color */
-  font-family: Arial, sans-serif; /* Example font */
-}
-
-/* Styles for headers, adjust the color if needed */
-h1, h2, h3, h4, h5, h6 {
-  color: #FFFFFF; /* White text for headers */
-}
-
-
-/* Add other element styles below as needed */
-
 .loadingOverlay {
   position: fixed;
   top: 0;

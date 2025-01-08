@@ -9,6 +9,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {UserContext} from '../UserContext';
 import dynamic from 'next/dynamic';
 import Navbar from '../components/navbar';
+import { Router } from 'next/router';
+import styles from '../styles/Loading.module.css';
 
 // Use require instead of import since order matters
 require('@solana/wallet-adapter-react-ui/styles.css');
@@ -55,17 +57,45 @@ const App: FC<{ Component: FC<any>; pageProps: any }> = ({ Component, pageProps 
         async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
         { ssr: false }
     );
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+
+        Router.events.on('routeChangeStart', () => {
+            timer = setTimeout(() => setLoading(true), 250);
+        });
+
+        Router.events.on('routeChangeComplete', () => {
+            clearTimeout(timer);
+            setLoading(false);
+        });
+
+        Router.events.on('routeChangeError', () => {
+            clearTimeout(timer);
+            setLoading(false);
+        });
+
+        return () => {
+            clearTimeout(timer);
+        };
+    }, []);
+
     return (
         <>
+            {loading && (
+                <div className={styles.loadingOverlay}>
+                    <div className={styles.loadingSpinner}></div>
+                </div>
+            )}
+            <Context>
+            {/* <div style={{ position: 'fixed', top: 0, right: 0, zIndex: 1, margin: 12 }}>
+            <WalletMultiButtonDynamic />
+            </div> */}
+                <Navbar />
 
-        <Context>
-        {/* <div style={{ position: 'fixed', top: 0, right: 0, zIndex: 1, margin: 12 }}>
-        <WalletMultiButtonDynamic />
-        </div> */}
-            <Navbar />
-
-            <Content Component={Component} pageProps={pageProps} />
-        </Context>
+                <Content Component={Component} pageProps={pageProps} />
+            </Context>
 
         </>
 
