@@ -222,7 +222,7 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
                 <tr 
                   key={`${token}-${item.protocol}`}
                   className={`${item.protocol === 'Top LSTs' ? styles.grayedOut : ''} ${item.protocol === 'Top LSTs' ? styles.tooltipElementHelp : ''}`}
-                  title={item.protocol === 'Top LSTs' ? 'This data is updated from Sanctum every 24hrs so it is not exactly like the rest of the data in the table but it is similar enough to be useful for comparison' : ''}
+                  title={item.protocol === 'Top LSTs' ? 'This data is updated from Sanctum every epoch (2-3 days) so it is not exactly like the rest of the data in the table but it is similar enough to be useful for comparison' : ''}
                 >
                   <td>
                     {item.protocol === 'Top LSTs' ? (

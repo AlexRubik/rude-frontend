@@ -91,9 +91,9 @@ const Home: NextPage<HomeProps> = () => {
                     
                     {isDropdownOpen && (
                         <div className={styles.dropdownContent}>
-                            <a href="https://www.youtube.com/watch?v=RNhc0KRa2AI" target="_blank" rel="noopener noreferrer">
+                            {/* <a href="https://www.youtube.com/watch?v=RNhc0KRa2AI" target="_blank" rel="noopener noreferrer">
                                 <h2>Beginner Tutorial</h2>
-                            </a>
+                            </a> */}
                             <a href="https://discord.gg/6DTGbMNYuA" target="_blank" rel="noopener noreferrer">
                                 <h2>Discord</h2>
                             </a>
