@@ -12,17 +12,6 @@ async function refreshCache() {
       data: protocols,
       lastUpdateTime 
     };
-
-    // check if protocols is empty
-    if (protocols.length === 0) {
-      console.log('Protocols array is empty after refresh');
-
-    }
-    // check if lastUpdateTime is null or undefined
-    if (lastUpdateTime === null || lastUpdateTime === undefined) {
-      console.log('Last update time is null or undefined after refresh');
-    }
-
     lastFetch = Date.now();
     console.log('Cache refreshed at:', new Date().toISOString());
   } catch (error) {
@@ -30,19 +19,14 @@ async function refreshCache() {
   }
 }
 
-// Initialize cache and set up auto-refresh
-if (typeof window === 'undefined') { // Only run on server side
-  console.log('Initializing cache...');
-  refreshCache(); // Initial cache fill
-  setInterval(() => {
-    console.log('Checking if it is time to refresh the cache...');
-    const now = new Date();
-    const minutes = now.getMinutes();
-    if (minutes >= 1 && minutes <= 3) { // Refresh during minutes 1, 2, and 3 of each hour
-      console.log('Refreshing cache because it is 1-3 minutes past the hour');
-      refreshCache();
-    }
-  }, 60000); // Check every minute
+function shouldRefreshCache() {
+  if (!cachedData || !cachedData.lastUpdateTime) return true;
+  
+  const now = Math.floor(Date.now() / 1000); // Convert to unix seconds
+  const minutesSinceLastUpdate = (now - cachedData.lastUpdateTime) / 60;
+  console.log('Minutes since last update:', Math.floor(minutesSinceLastUpdate));
+  
+  return minutesSinceLastUpdate > 61;
 }
 
 export default async function handler(
@@ -54,11 +38,11 @@ export default async function handler(
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
-  if (!cachedData) {
-    console.log('Cache is empty, refreshing...');
+  if (!cachedData || shouldRefreshCache()) {
+    console.log('Refreshing cache because:', !cachedData ? 'cache is empty' : 'last update was over 61 minutes ago');
     await refreshCache();
   }
-  // sending the cached data to the client
+
   console.log('Sending cached data to client');
   res.status(200).json(cachedData);
 }
