@@ -35,6 +35,7 @@ if (typeof window === 'undefined') { // Only run on server side
   console.log('Initializing cache...');
   refreshCache(); // Initial cache fill
   setInterval(() => {
+    console.log('Checking if it is time to refresh the cache...');
     const now = new Date();
     const minutes = now.getMinutes();
     if (minutes >= 1 && minutes <= 3) { // Refresh during minutes 1, 2, and 3 of each hour
@@ -57,6 +58,7 @@ export default async function handler(
     console.log('Cache is empty, refreshing...');
     await refreshCache();
   }
-
+  // sending the cached data to the client
+  console.log('Sending cached data to client');
   res.status(200).json(cachedData);
 }
