@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { NextPage, GetServerSideProps } from 'next';
 import styles from '../styles/Apy.module.css';
 import { fetchSanctumApys, calculateTop5Average } from '../utils';
+import Head from 'next/head';
+import { getLast24HourProtocolApys } from '../db';
 
 type ApyData = {
   protocol_name: string;
@@ -32,6 +34,8 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdateTime, setLastUpdateTime] = useState<number | null>(initialData.lastUpdateTime);
   const [show24hrApyModal, setShow24hrApyModal] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showUpdateInfoModal, setShowUpdateInfoModal] = useState(false);
 
   useEffect(() => {
     const fetchSanctumData = async () => {
@@ -112,6 +116,28 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
     return links[protocolName] || null;
   };
 
+  const refreshData = async () => {
+    setIsRefreshing(true);
+    try {
+      const response = await fetch('/api/apyData');
+      const result = await response.json();
+      
+      if (result.success) {
+        setApyData(result.data);
+        setLastUpdateTime(result.lastUpdateTime);
+      }
+
+      // Refresh LST data
+      const sanctumData = await fetchSanctumApys();
+      const top5Data = calculateTop5Average(sanctumData.apys);
+      setLstAverage(top5Data.averageApy * 100);
+    } catch (err) {
+      console.error('Failed to refresh data:', err);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
   if (loading) {
     return <div className={styles.dashboardContainer}>
       <h1 className={styles.title}>Loading APY data...</h1>
@@ -126,6 +152,10 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
 
   return (
     <div className={styles.dashboardContainer}>
+      <Head>
+        <title>APY Dashboard</title>
+      </Head>
+
       {show24hrApyModal && (
         <div className={styles.rolling24hrModalOverlay} onClick={() => setShow24hrApyModal(false)}>
           <div className={styles.rolling24hrModal} onClick={e => e.stopPropagation()}>
@@ -136,8 +166,37 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
         </div>
       )}
 
-      <h1 className={styles.title}>Lending APY Dashboard</h1>
-      <p className={styles.updateTime}>{getTimeSinceUpdate()}</p>
+      {showUpdateInfoModal && (
+        <div className={styles.updateInfoModalOverlay} onClick={() => setShowUpdateInfoModal(false)}>
+          <div className={styles.updateInfoModal} onClick={e => e.stopPropagation()}>
+            <p>New Data Every Hour</p>
+            <button className={styles.updateInfoCloseButton} onClick={() => setShowUpdateInfoModal(false)}>×</button>
+          </div>
+        </div>
+      )}
+
+      <div className={styles.titleContainer}>
+        <h1 className={styles.title}>
+          Lending APY Dashboard
+          <button 
+            onClick={refreshData} 
+            className={`${styles.refreshButton} ${isRefreshing ? styles.spinning : ''}`}
+            disabled={isRefreshing}
+          >
+            ↻
+          </button>
+        </h1>
+      </div>
+      <p className={styles.updateTime}>
+        {getTimeSinceUpdate()}
+        <span 
+          className={`${styles.infoIcon} ${styles.tooltipElement} ${styles.clickable}`}
+          title="New Data Every Hour"
+          onClick={() => setShowUpdateInfoModal(true)}
+        >
+          ⓘ
+        </span>
+      </p>
       
       {tokenTables.map(({ token, data }) => (
         <div key={token} className={styles.protocolTableContainer}>
@@ -207,6 +266,20 @@ export const getServerSideProps: GetServerSideProps = async () => {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/apyData`);
     const initialData = await response.json();
+
+    if (!initialData.success) {
+      console.log('API cache failed, fetching from DB');
+      // If API cache fails, fetch directly from DB
+      const { protocols, lastUpdateTime } = await getLast24HourProtocolApys();
+      return {
+        props: {
+          initialData: {
+            data: protocols,
+            lastUpdateTime
+          }
+        }
+      };
+    }
 
     return {
       props: {
