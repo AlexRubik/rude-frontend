@@ -27,6 +27,17 @@ type TableData = {
   latestApy: number;
 };
 
+function shouldRefreshData() {
+  const now = new Date();
+  const minutes = now.getMinutes();
+  
+  // Special case for top of the hour: wait until 2 minutes past
+  if (minutes === 2) return true;
+  
+  // For all other cases, refresh at 10-minute increments
+  return minutes !== 0 && minutes % 10 === 0; // True at 10, 20, 30, 40, 50 minutes
+}
+
 const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
   const [apyData, setApyData] = useState<ApyData[]>(initialData.data);
   const [lstAverage, setLstAverage] = useState<number | null>(null);
@@ -38,6 +49,15 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
   const [showUpdateInfoModal, setShowUpdateInfoModal] = useState(false);
 
   useEffect(() => {
+    // Check every 30 seconds if we should refresh
+    const intervalId = setInterval(() => {
+      if (shouldRefreshData()) {
+        console.log('Refreshing data at:', new Date().toISOString());
+        refreshData();
+      }
+    }, 30000); // 30 seconds
+
+    // Initial fetch of Sanctum data
     const fetchSanctumData = async () => {
       try {
         const sanctumData = await fetchSanctumApys();
@@ -49,6 +69,9 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
     };
 
     fetchSanctumData();
+
+    // Cleanup interval on unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   const getTimeSinceUpdate = () => {
