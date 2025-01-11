@@ -118,16 +118,17 @@ export async function updateMonthlyStartingBal(pubkey: string, ata: string, mont
     await pool.query(query);
 }
 
-interface ProtocolApy {
+export interface ProtocolApy {
   protocol_name: string;
   tokens: {
     token_ticker: string;
     avg_apy: number;
     latest_apy: number;
+    latest_update_time: number;
   }[];
 }
 
-interface ApyResponse {
+export interface ApyResponse {
   protocols: ProtocolApy[];
   lastUpdateTime: number;
 }
@@ -146,13 +147,20 @@ export async function getLast24HourProtocolApys(): Promise<ApyResponse> {
       h.token_ticker,
       (
         SELECT apy 
-        FROM lending_apys 
-        WHERE protocol_name = h.protocol_name 
-        AND token_ticker = h.token_ticker 
-        AND unix_timestamp >= (SELECT last_update FROM latest_time) - 60
-        ORDER BY unix_timestamp DESC
+        FROM lending_apys l
+        WHERE l.protocol_name = h.protocol_name 
+        AND l.token_ticker = h.token_ticker 
+        ORDER BY l.unix_timestamp DESC
         LIMIT 1
       ) as latest_apy,
+      (
+        SELECT unix_timestamp
+        FROM lending_apys l
+        WHERE l.protocol_name = h.protocol_name 
+        AND l.token_ticker = h.token_ticker 
+        ORDER BY l.unix_timestamp DESC
+        LIMIT 1
+      ) as latest_update_time,
       AVG(h.apy) as avg_apy,
       (SELECT last_update FROM latest_time) as last_update_time
     FROM lending_apys h
@@ -164,7 +172,6 @@ export async function getLast24HourProtocolApys(): Promise<ApyResponse> {
   try {
     const { rows } = await pool.query(query, [oneDayAgo]);
     
-    // Group results by protocol
     const protocolMap = new Map<string, ProtocolApy>();
     let lastUpdateTime = 0;
     
@@ -181,11 +188,11 @@ export async function getLast24HourProtocolApys(): Promise<ApyResponse> {
       protocolMap.get(row.protocol_name)?.tokens.push({
         token_ticker: row.token_ticker,
         avg_apy: Number(row.avg_apy),
-        latest_apy: Number(row.latest_apy)
+        latest_apy: Number(row.latest_apy),
+        latest_update_time: Number(row.latest_update_time)
       });
     });
 
-    
     return {
       protocols: Array.from(protocolMap.values()),
       lastUpdateTime

@@ -240,5 +240,15 @@
   margin: 0 auto;
   padding: 0 20px;
 }
+
+/* normal cursor */
+.tooltipContainer {
+  cursor: default;
+  position: relative;
+}
+
+.tooltipContainer:hover {
+  background-color: rgba(0, 255, 255, 0.05);
+}
     
   

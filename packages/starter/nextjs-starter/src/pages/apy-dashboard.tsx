@@ -3,7 +3,6 @@ import { NextPage, GetServerSideProps } from 'next';
 import styles from '../styles/Apy.module.css';
 import { fetchSanctumApys, calculateTop5Average } from '../utils';
 import Head from 'next/head';
-import { getLast24HourProtocolApys } from '../db';
 
 type ApyData = {
   protocol_name: string;
@@ -11,6 +10,7 @@ type ApyData = {
     token_ticker: string;
     avg_apy: number;
     latest_apy: number;
+    latest_update_time: number;
   }[];
 };
 
@@ -25,6 +25,7 @@ type TableData = {
   protocol: string;
   apy: number;
   latestApy: number;
+  latest_update_time: number;
 };
 
 function shouldRefreshData() {
@@ -83,7 +84,7 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
 
   // New function to reorganize data by token
   const getTokenTables = () => {
-    const tokenMap = new Map<string, { protocol: string; apy: number; latestApy: number }[]>();
+    const tokenMap = new Map<string, { protocol: string; apy: number; latestApy: number; latest_update_time: number }[]>();
     
     apyData.forEach((protocol) => {
       protocol.tokens.forEach((token) => {
@@ -94,6 +95,7 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
           protocol: protocol.protocol_name,
           apy: token.avg_apy,
           latestApy: token.latest_apy,
+          latest_update_time: token.latest_update_time
         });
       });
     });
@@ -112,16 +114,18 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
         const tableWithLst = {
           ...table,
           data: [
-            { protocol: 'Top LSTs', apy: lstAverage, latestApy: lstAverage },
+            { 
+              protocol: 'Top LSTs', 
+              apy: lstAverage, 
+              latestApy: lstAverage,
+              latest_update_time: Math.floor(Date.now() / 1000) // Current time in seconds
+            },
             ...table.data
           ].sort((a, b) => b.apy - a.apy)
         };
         return tableWithLst;
       }
-      return {
-        ...table,
-        data: table.data.sort((a, b) => b.apy - a.apy)
-      };
+      return table;
     });
   };
 
@@ -159,6 +163,11 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
     } finally {
       setIsRefreshing(false);
     }
+  };
+
+  const formatTimestamp = (unixTimestamp: number): string => {
+    const date = new Date(unixTimestamp * 1000); // Convert seconds to milliseconds
+    return date.toLocaleString(); // Converts to local time format
   };
 
   if (loading) {
@@ -253,7 +262,7 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
                 <tr 
                   key={`${token}-${item.protocol}`}
                   className={`${item.protocol === 'Top LSTs' ? styles.grayedOut : ''} ${item.protocol === 'Top LSTs' ? styles.tooltipElementHelp : ''}`}
-                  title={item.protocol === 'Top LSTs' ? 'This data is updated from Sanctum every epoch (2-3 days) so it is not exactly like the rest of the data in the table but it is similar enough to be useful for comparison' : ''}
+                  title={item.protocol === 'Top LSTs' ? 'This data is updated from Sanctum every epoch (2-3 days)' : ''}
                 >
                   <td>
                     {item.protocol === 'Top LSTs' ? (
@@ -280,7 +289,10 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
                     )}
                   </td>
                   <td>{item.apy.toFixed(2)}%</td>
-                  <td>
+                  <td 
+                    className={item.protocol !== 'Top LSTs' ? styles.tooltipContainer : ''}
+                    title={item.protocol !== 'Top LSTs' ? `Last updated: ${formatTimestamp(item.latest_update_time)}` : ''}
+                  >
                     {item.latestApy.toFixed(2)}%
                   </td>
                 </tr>
@@ -299,14 +311,13 @@ export const getServerSideProps: GetServerSideProps = async () => {
     const initialData = await response.json();
 
     if (!initialData.success) {
-      console.log('API cache failed, fetching from DB');
-      // If API cache fails, fetch directly from DB
-      const { protocols, lastUpdateTime } = await getLast24HourProtocolApys();
+      console.log('API cache failed');
+      // Return empty because we can't import the db here because we dont want to expose env variables to the client
       return {
         props: {
           initialData: {
-            data: protocols,
-            lastUpdateTime
+            data: [],
+            lastUpdateTime: null
           }
         }
       };
