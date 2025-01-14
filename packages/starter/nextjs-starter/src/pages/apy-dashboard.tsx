@@ -110,7 +110,7 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
     const tables = getTokenTables();
     
     return tables.map(table => {
-      if (table.token === 'SOL' && lstAverage !== null) {
+      if (table.token === 'SOL' && lstAverage !== null && !error) {
         const tableWithLst = {
           ...table,
           data: [
@@ -118,7 +118,7 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
               protocol: 'Top LSTs', 
               apy: lstAverage, 
               latestApy: lstAverage,
-              latest_update_time: Math.floor(Date.now() / 1000) // Current time in seconds
+              latest_update_time: Math.floor(Date.now() / 1000)
             },
             ...table.data
           ].sort((a, b) => b.apy - a.apy)
