@@ -205,3 +205,64 @@ export async function getLast24HourProtocolApys(): Promise<ApyResponse> {
     };
   }
 }
+
+export interface LpPosition {
+  position_mint_address: string;
+  starting_usd_value: number;
+  closing_usd_value: number | null;
+  pnl_usd: number;
+  pnl_percentage: number;
+  lower_boundary: number;
+  upper_boundary: number;
+  entry_price: number;
+  closing_price: number | null;
+  position_start_time: number;
+  position_end_time: number | null;
+}
+
+export async function getInactiveLpPositions(pubkey: string): Promise<LpPosition[]> {
+  const query = `
+    SELECT 
+      position_mint_address,
+      CAST(starting_usd_value AS FLOAT) as starting_usd_value,
+      CAST(closing_usd_value AS FLOAT) as closing_usd_value,
+      CAST(COALESCE(closing_usd_value, 0) - starting_usd_value AS FLOAT) as pnl_usd,
+      CAST(
+        CASE 
+          WHEN starting_usd_value > 0 
+          THEN ((COALESCE(closing_usd_value, 0) - starting_usd_value) / starting_usd_value) * 100
+          ELSE 0 
+        END 
+      AS FLOAT) as pnl_percentage,
+      CAST(lower_boundary AS FLOAT) as lower_boundary,
+      CAST(upper_boundary AS FLOAT) as upper_boundary,
+      CAST(entry_price AS FLOAT) as entry_price,
+      CAST(closing_price AS FLOAT) as closing_price,
+      position_start_time,
+      position_end_time
+    FROM lp_positions
+    WHERE pubkey = $1 
+    AND is_active = false
+    ORDER BY position_start_time DESC
+  `;
+
+  try {
+    const { rows } = await pool.query<LpPosition>(query, [pubkey]);
+    return rows.map(row => ({
+      ...row,
+      starting_usd_value: Number(row.starting_usd_value),
+      closing_usd_value: row.closing_usd_value ? Number(row.closing_usd_value) : null,
+      pnl_usd: Number(row.pnl_usd),
+      pnl_percentage: Number(row.pnl_percentage),
+      lower_boundary: Number(row.lower_boundary),
+      upper_boundary: Number(row.upper_boundary),
+      entry_price: Number(row.entry_price),
+      closing_price: row.closing_price ? Number(row.closing_price) : null,
+      position_start_time: Number(row.position_start_time),
+      position_end_time: row.position_end_time ? Number(row.position_end_time) : null
+    }));
+  } catch (err) {
+    console.error('Error fetching inactive LP positions:', err);
+    throw err;
+  }
+}
