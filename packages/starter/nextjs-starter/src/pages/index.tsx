@@ -97,7 +97,7 @@ const Home: NextPage<HomeProps> = () => {
                             <a href="https://discord.gg/6DTGbMNYuA" target="_blank" rel="noopener noreferrer">
                                 <h2>Discord</h2>
                             </a>
-                            <a href="https://x.com/solanarbitrage" target="_blank" rel="noopener noreferrer">
+                            <a href="https://x.com/RudeLabs_io" target="_blank" rel="noopener noreferrer">
                                 <h2>Twitter</h2>
                             </a>
                             <a href="https://github.com/AlexRubik/rude-bot-solana" target="_blank" rel="noopener noreferrer">

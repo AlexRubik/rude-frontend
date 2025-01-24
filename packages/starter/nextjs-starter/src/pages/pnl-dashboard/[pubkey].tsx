@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { NextPage } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
+import styles from '../../styles/PnlDashboard.module.css';
 
 interface LpPosition {
   position_mint_address: string;
@@ -158,35 +160,67 @@ const PnlDashboard: NextPage = () => {
     ));
   };
 
-  if (loading) return <div className="p-4">Loading positions...</div>;
-  if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
+  if (loading) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.main}>
+          Loading positions...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.main}>
+          <span className={styles.negative}>Error: {error}</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-4 bg-gray-900 min-h-screen text-white">
+    <div className={styles.container}>
       <Head>
-        <title>PnL Dashboard</title>
+        <title>LP PnL Dashboard</title>
       </Head>
 
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
+      <div className={styles.main}>
+        <div className={styles.header}>
           <div>
-            <h1 className="text-2xl font-bold">PnL Dashboard</h1>
-            <h2 className="text-sm text-gray-400">Wallet: {pubkey}</h2>
+            <div className={styles.headerTop}>
+              <Link href="/pnl-dashboard" className={styles.backButton}>
+                ← Back
+              </Link>
+              <h1 className={styles.title}>PnL Dashboard</h1>
+            </div>
+            <h2 className={styles.subtitle}>
+              Wallet:{' '}
+              <a 
+                href={`https://solscan.io/account/${pubkey}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.pubkeyLink}
+              >
+                {pubkey}
+              </a>
+            </h2>
           </div>
 
           <div className="relative">
             <button
               onClick={() => setShowFilterMenu(!showFilterMenu)}
-              className="px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors"
+              className={styles.filterButton}
             >
               Columns ▼
             </button>
 
             {showFilterMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-xl z-10">
+              <div className={styles.filterMenu}>
                 <div className="p-2">
                   {columns.map(column => (
-                    <label key={column.key} className="flex items-center p-2 hover:bg-gray-700 rounded cursor-pointer">
+                    <label key={column.key} className={styles.filterMenuItem}>
                       <input
                         type="checkbox"
                         checked={column.visible}
@@ -202,26 +236,26 @@ const PnlDashboard: NextPage = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded-lg border border-gray-700">
-          <table className="min-w-full divide-y divide-gray-700">
-            <thead className="bg-gray-800">
+        <div className="overflow-x-auto">
+          <table className={styles.table}>
+            <thead className={styles.tableHeader}>
               <tr>
                 {columns.filter(col => col.visible).map(column => (
                   <th
                     key={column.key}
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider"
+                    className={styles.tableHeaderCell}
                   >
                     {column.label}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="bg-gray-900 divide-y divide-gray-700">
+            <tbody>
               {positions.map((position) => (
                 <tr 
                   key={position.position_mint_address}
-                  className={`hover:bg-gray-800 transition-colors ${
-                    position.pnl_usd >= 0 ? 'text-green-400' : 'text-red-400'
+                  className={`${styles.tableRow} ${
+                    position.pnl_usd >= 0 ? styles.positive : styles.negative
                   }`}
                 >
                   {columns
@@ -229,7 +263,7 @@ const PnlDashboard: NextPage = () => {
                     .map(column => (
                       <td 
                         key={column.key}
-                        className="px-6 py-4 whitespace-nowrap text-sm"
+                        className={styles.tableCell}
                       >
                         {column.format(position[column.key])}
                       </td>

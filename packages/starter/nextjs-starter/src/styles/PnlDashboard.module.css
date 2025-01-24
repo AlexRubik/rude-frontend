@@ -1,0 +1,177 @@
+.container {
+  padding: 1rem;
+  padding-top: 3.5rem;
+  min-height: 100vh;
+  color: white;
+}
+
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding-top: 1rem;
+  font-size: 1.5rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: rgb(156, 163, 175);
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid rgb(55, 65, 81);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.tableHeader {
+  background-color: rgb(31, 41, 55);
+}
+
+.tableHeaderCell {
+  padding: 0.75rem 1.5rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: rgb(156, 163, 175);
+}
+
+.tableRow {
+  transition: background-color 0.2s;
+}
+
+.tableRow:hover {
+  background-color: rgb(31, 41, 55);
+}
+
+.tableCell {
+  padding: 1rem 1.5rem;
+  font-size: 0.875rem;
+  border-top: 1px solid rgb(55, 65, 81);
+}
+
+.positive {
+  color: rgb(34, 197, 94);
+}
+
+.negative {
+  color: rgb(239, 68, 68);
+}
+
+.filterButton {
+  padding: 0.5rem 1rem;
+  background-color: rgb(55, 65, 81);
+  color: white;
+}
+
+.filterButton:hover {
+  background-color: rgb(75, 85, 99);
+}
+
+.filterMenu {
+  position: absolute;
+  right: 0;
+  margin-top: 0.5rem;
+  width: 12rem;
+  background-color: rgb(31, 41, 55);
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.filterMenuItem {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.filterMenuItem:hover {
+  background-color: rgb(55, 65, 81);
+}
+
+/* Index page specific styles */
+.walletList {
+  display: grid;
+  gap: 1rem;
+}
+
+.walletLink {
+  display: block;
+  padding: 1rem;
+  background-color: rgb(17, 24, 39);
+  border-radius: 0.5rem;
+  text-decoration: none;
+}
+
+.walletLinkContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.walletAddress {
+  font-family: monospace;
+  display: inline-block;
+  position: relative;
+  padding-right: 1.5rem;
+}
+
+.walletLinkContent:hover {
+  cursor: pointer;
+  color: turquoise;
+  text-decoration: underline;
+}
+
+.headerTop {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.backButton {
+  color: rgb(156, 163, 175);
+  text-decoration: none;
+  transition: color 0.2s;
+  font-size: 0.875rem;
+}
+
+.backButton:hover {
+  color: white;
+}
+
+.pubkeyLink {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.pubkeyLink:hover {
+  color: turquoise;
+  text-decoration: underline;
+} 

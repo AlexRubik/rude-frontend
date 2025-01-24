@@ -266,3 +266,20 @@ export async function getInactiveLpPositions(pubkey: string): Promise<LpPosition
     throw err;
   }
 }
+
+export async function getUniquePubkeysWithLpPositions(): Promise<string[]> {
+  const query = `
+    SELECT DISTINCT pubkey 
+    FROM lp_positions 
+    WHERE pubkey IS NOT NULL 
+    ORDER BY pubkey
+  `;
+
+  try {
+    const { rows } = await pool.query<{ pubkey: string }>(query);
+    return rows.map(row => row.pubkey);
+  } catch (err) {
+    console.error('Error fetching unique pubkeys:', err);
+    throw err;
+  }
+}
