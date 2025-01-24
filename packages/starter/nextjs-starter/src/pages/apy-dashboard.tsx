@@ -8,7 +8,9 @@ type ApyData = {
   protocol_name: string;
   tokens: {
     token_ticker: string;
-    avg_apy: number;
+    avg_24h_apy: number;
+    avg_7d_apy: number;
+    avg_30d_apy: number;
     latest_apy: number;
     latest_update_time: number;
   }[];
@@ -24,6 +26,8 @@ interface DashboardProps {
 type TableData = {
   protocol: string;
   apy: number;
+  apy_7d: number;
+  apy_30d: number;
   latestApy: number;
   latest_update_time: number;
 };
@@ -84,7 +88,7 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
 
   // New function to reorganize data by token
   const getTokenTables = () => {
-    const tokenMap = new Map<string, { protocol: string; apy: number; latestApy: number; latest_update_time: number }[]>();
+    const tokenMap = new Map<string, { protocol: string; apy: number; apy_7d: number; apy_30d: number; latestApy: number; latest_update_time: number }[]>();
     
     apyData.forEach((protocol) => {
       protocol.tokens.forEach((token) => {
@@ -93,7 +97,9 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
         }
         tokenMap.get(token.token_ticker)?.push({
           protocol: protocol.protocol_name,
-          apy: token.avg_apy,
+          apy: token.avg_24h_apy,
+          apy_7d: token.avg_7d_apy,
+          apy_30d: token.avg_30d_apy,
           latestApy: token.latest_apy,
           latest_update_time: token.latest_update_time
         });
@@ -117,6 +123,8 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
             { 
               protocol: 'Top LSTs', 
               apy: lstAverage, 
+              apy_7d: lstAverage,
+              apy_30d: lstAverage,
               latestApy: lstAverage,
               latest_update_time: Math.floor(Date.now() / 1000)
             },
@@ -248,10 +256,26 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
                 <th>
                   <span 
                     className={`${styles.tooltipElement} ${styles.clickable}`} 
-                    title="Rolling 24hr data updated every hour"
+                    title="Rolling 24hr average updated every hour"
                     onClick={() => setShow24hrApyModal(true)}
                   >
-                    24hr APY (%)
+                    24h APY (%)
+                  </span>
+                </th>
+                <th>
+                  <span 
+                    className={styles.tooltipElement}
+                    title="Rolling 7-day average"
+                  >
+                    7d APY (%)
+                  </span>
+                </th>
+                <th>
+                  <span 
+                    className={styles.tooltipElement}
+                    title="Rolling 30-day average"
+                  >
+                    30d APY (%)
                   </span>
                 </th>
                 <th>Latest APY (%)</th>
@@ -289,6 +313,8 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
                     )}
                   </td>
                   <td>{item.apy.toFixed(2)}%</td>
+                  <td>{item.apy_7d.toFixed(2)}%</td>
+                  <td>{item.apy_30d.toFixed(2)}%</td>
                   <td 
                     className={item.protocol !== 'Top LSTs' ? styles.tooltipContainer : ''}
                     title={item.protocol !== 'Top LSTs' ? `Last updated: ${formatTimestamp(item.latest_update_time)}` : ''}

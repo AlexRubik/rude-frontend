@@ -122,7 +122,9 @@ export interface ProtocolApy {
   protocol_name: string;
   tokens: {
     token_ticker: string;
-    avg_apy: number;
+    avg_24h_apy: number;
+    avg_7d_apy: number;
+    avg_30d_apy: number;
     latest_apy: number;
     latest_update_time: number;
   }[];
@@ -133,20 +135,21 @@ export interface ApyResponse {
   lastUpdateTime: number;
 }
 
-export async function getLast24HourProtocolApys(): Promise<ApyResponse> {
+export async function getProtocolApys() {
   const oneDayAgo = Math.floor(Date.now() / 1000) - (24 * 60 * 60);
-  
+  const sevenDaysAgo = Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60);
+  const thirtyDaysAgo = Math.floor(Date.now() / 1000) - (30 * 24 * 60 * 60);
+
   const query = `
     WITH latest_time AS (
-      SELECT MAX(unix_timestamp) as last_update
+      SELECT MAX(unix_timestamp) as last_update 
       FROM lending_apys
-      WHERE unix_timestamp >= $1
     )
     SELECT 
       h.protocol_name,
       h.token_ticker,
       (
-        SELECT apy 
+        SELECT apy
         FROM lending_apys l
         WHERE l.protocol_name = h.protocol_name 
         AND l.token_ticker = h.token_ticker 
@@ -161,16 +164,36 @@ export async function getLast24HourProtocolApys(): Promise<ApyResponse> {
         ORDER BY l.unix_timestamp DESC
         LIMIT 1
       ) as latest_update_time,
-      AVG(h.apy) as avg_apy,
+      (
+        SELECT AVG(apy)
+        FROM lending_apys l
+        WHERE l.protocol_name = h.protocol_name 
+        AND l.token_ticker = h.token_ticker 
+        AND l.unix_timestamp >= $1
+      ) as avg_24h_apy,
+      (
+        SELECT AVG(apy)
+        FROM lending_apys l
+        WHERE l.protocol_name = h.protocol_name 
+        AND l.token_ticker = h.token_ticker 
+        AND l.unix_timestamp >= $2
+      ) as avg_7d_apy,
+      (
+        SELECT AVG(apy)
+        FROM lending_apys l
+        WHERE l.protocol_name = h.protocol_name 
+        AND l.token_ticker = h.token_ticker 
+        AND l.unix_timestamp >= $3
+      ) as avg_30d_apy,
       (SELECT last_update FROM latest_time) as last_update_time
     FROM lending_apys h
-    WHERE h.unix_timestamp >= $1
+    WHERE h.unix_timestamp >= $3
     GROUP BY h.protocol_name, h.token_ticker
     ORDER BY h.protocol_name, h.token_ticker
   `;
 
   try {
-    const { rows } = await pool.query(query, [oneDayAgo]);
+    const { rows } = await pool.query(query, [oneDayAgo, sevenDaysAgo, thirtyDaysAgo]);
     
     const protocolMap = new Map<string, ProtocolApy>();
     let lastUpdateTime = 0;
@@ -187,7 +210,9 @@ export async function getLast24HourProtocolApys(): Promise<ApyResponse> {
       
       protocolMap.get(row.protocol_name)?.tokens.push({
         token_ticker: row.token_ticker,
-        avg_apy: Number(row.avg_apy),
+        avg_24h_apy: Number(row.avg_24h_apy),
+        avg_7d_apy: Number(row.avg_7d_apy),
+        avg_30d_apy: Number(row.avg_30d_apy),
         latest_apy: Number(row.latest_apy),
         latest_update_time: Number(row.latest_update_time)
       });
@@ -198,7 +223,7 @@ export async function getLast24HourProtocolApys(): Promise<ApyResponse> {
       lastUpdateTime
     };
   } catch (err) {
-    console.error('Error fetching 24h protocol APYs:', err);
+    console.error('Error fetching protocol APYs:', err);
     return {
       protocols: [],
       lastUpdateTime: 0

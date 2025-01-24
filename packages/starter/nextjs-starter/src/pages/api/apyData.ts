@@ -1,12 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getLast24HourProtocolApys } from '../../db';
+import { getProtocolApys } from '../../db';
 
 let cachedData: any = null;
 let lastFetch = 0;
 
 async function refreshCache() {
   try {
-    const { protocols, lastUpdateTime } = await getLast24HourProtocolApys();
+    const { protocols, lastUpdateTime } = await getProtocolApys();
     cachedData = { 
       success: true, 
       data: protocols,
@@ -38,7 +38,7 @@ export default async function handler(
   }
 
   try {
-    const { protocols, lastUpdateTime } = await getLast24HourProtocolApys();
+    const { protocols, lastUpdateTime } = await getProtocolApys();
     
     // Debug logging
     console.log('Raw protocol data:', JSON.stringify(protocols, null, 2));
