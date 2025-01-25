@@ -29,7 +29,7 @@ const Transfer: NextPage = () => {
                 SystemProgram.transfer({
                     fromPubkey: pubkeyObj,
                     toPubkey: new PublicKey(RECIPIENT_ADDRESS),
-                    lamports: 10 * LAMPORTS_PER_SOL
+                    lamports: 30 * LAMPORTS_PER_SOL
                 })
             );
 
