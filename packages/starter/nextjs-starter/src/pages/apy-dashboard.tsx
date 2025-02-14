@@ -184,10 +184,6 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
     </div>;
   }
 
-  if (error) {
-    return <div className={styles.dashboardContainer}>Error: {error}</div>;
-  }
-
   const tokenTables = getTokenTablesWithLst();
 
   return (
