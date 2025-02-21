@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import styles from '../styles/Home.module.css';
+import styles from '../styles/Lsts.module.css';
 import { Connection } from '@solana/web3.js';
-import { createUrlFromToml } from '../utils';
-
-type ApyData = {
-  apys: Record<string, number>;
-  errs?: Record<string, { message: string | null; code: string }>;
-};
+import { fetchLstData, LstResponse, Lst } from '../utils';
 
 const SortedApyData: React.FC = () => {
-  const [data, setData] = useState<ApyData | null>(null);
+  const [data, setData] = useState<LstResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [epochOutput, setOutput] = useState<string>('Loading...');
@@ -17,12 +12,7 @@ const SortedApyData: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const sanctumUrl = await createUrlFromToml();
-        const response = await fetch(sanctumUrl);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const result: ApyData = await response.json();
+        const result = await fetchLstData();
         setData(result);
       } catch (error) {
         setError('Failed to fetch data');
@@ -60,12 +50,8 @@ const SortedApyData: React.FC = () => {
     fetchData();
   }, []);
 
-  const formatApyData = (data: ApyData | null) => {
-    if (!data || !data.apys) return null;
-
-    const sortedApys = Object.entries(data.apys)
-      .map(([token, apy]) => ({ token, apy }))
-      .sort((a, b) => b.apy - a.apy);
+  const formatLstData = (data: LstResponse | null) => {
+    if (!data || !data.lsts) return null;
 
     return (
       <div className={styles.apyList}>
@@ -73,37 +59,35 @@ const SortedApyData: React.FC = () => {
           <thead>
             <tr>
               <th>Token</th>
-              <th>APY (%)</th>
+              <th>Name</th>
+              <th>Current APY (%)</th>
+              <th>Past Epoch APY (%)</th>
+              <th>TVL (SOL)</th>
+              <th>Holders</th>
             </tr>
           </thead>
           <tbody>
-            {sortedApys.map(({ token, apy }) => (
-              <tr key={token}>
+            {data.lsts.map((lst) => (
+              <tr key={lst.mint}>
                 <td>
                   <a 
-                    href={`https://solscan.io/token/${token}`}
+                    href={`https://solscan.io/token/${lst.mint}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={styles.tokenLink}
                   >
-                    {token.slice(0, 4)}...{token.slice(-4)} ↗
+                    {lst.symbol} ↗
                   </a>
                 </td>
-                <td>{(apy * 100).toFixed(2)}%</td>
+                <td>{lst.name}</td>
+                <td>{(lst.data.apy * 100).toFixed(2)}%</td>
+                <td>{(lst.data.apyPastEpoch * 100).toFixed(2)}%</td>
+                <td>{(lst.data.tvl / 1e9).toFixed(0)}</td>
+                <td>{lst.data.holders}</td>
               </tr>
             ))}
           </tbody>
         </table>
-        {data.errs && Object.keys(data.errs).length > 0 && (
-          <div className={styles.errors}>
-            <h3>Errors:</h3>
-            {Object.entries(data.errs).map(([token, error]) => (
-              <div key={token} className={styles.error}>
-                <strong>{token}:</strong> {error.message || error.code}
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     );
   };
@@ -119,7 +103,7 @@ const SortedApyData: React.FC = () => {
             {epochOutput}
           </pre>
           <div className={styles.updateNote}>
-            Data is updated every epoch by{' '}
+            Data from{' '}
             <a 
               href="https://app.sanctum.so/lsts"
               target="_blank"
@@ -136,7 +120,7 @@ const SortedApyData: React.FC = () => {
               <div className={styles.spinner}></div>
             </div>
           ) : (
-            formatApyData(data)
+            formatLstData(data)
           )}
         </div>
       </main>

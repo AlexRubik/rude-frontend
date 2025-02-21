@@ -126,3 +126,64 @@ export function calculateTop5Average(apys: Record<string, number>): Top5ApyResul
   };
 }
 
+interface LstMeta {
+  Categories: string;
+  "Feature ID": string;
+  "First bullet point": string;
+  "Launch Date": string;
+  "Main value proposition": string;
+  "Mint address": string;
+  "Mint logo URL": string;
+  "Mint name": string;
+  "Mint symbol": string;
+  "One-liner": string;
+  Program: string;
+  "Sanctum Automated": string;
+  "Second bullet point": string;
+  Status: string;
+  "TG group link": string;
+  "Third bullet point": string;
+  Twitter: string;
+  "Vote account": string;
+  Website: string;
+}
+
+interface LstData {
+  apy: number;
+  apyPastEpoch: number;
+  tvl: number;
+  holders: number;
+  meta: LstMeta;
+}
+
+export interface Lst {
+  mint: string;
+  tokenProgram: string;
+  name: string;
+  symbol: string;
+  logoUri: string;
+  decimals: number;
+  solValue: number;
+  pool: Record<string, unknown>;
+  data: LstData;
+}
+
+export interface LstResponse {
+  lsts: Lst[];
+  page: number;
+  total: number;
+}
+
+export async function fetchLstData(): Promise<LstResponse> {
+  try {
+    const response = await fetch('https://lst-indexer-api.sanctum.so/lsts?page=0&sortBy=apy&order=desc&category=&search=&limit=50');
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching LST data:', error);
+    throw error;
+  }
+}
+

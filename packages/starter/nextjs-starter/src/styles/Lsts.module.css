@@ -1,0 +1,137 @@
+.container {
+  padding: 1rem;
+  padding-top: 3.5rem;
+  min-height: 100vh;
+  color: white;
+}
+
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.apyList {
+  margin-top: 2rem;
+  overflow-x: auto;
+}
+
+.apyTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid rgb(55, 65, 81);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.apyTable th {
+  background-color: rgb(31, 41, 55);
+  padding: 0.75rem;
+  text-align: left;
+  font-size: 0.875rem;
+  color: rgb(156, 163, 175);
+}
+
+.apyTable td {
+  padding: 0.75rem;
+  border-top: 1px solid rgb(55, 65, 81);
+}
+
+.apyTable tr:hover {
+  background-color: rgb(31, 41, 55);
+}
+
+.tokenLink {
+  color: turquoise;
+  text-decoration: none;
+}
+
+.tokenLink:hover {
+  text-decoration: underline;
+}
+
+.pre {
+  background: rgb(31, 41, 55);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+.updateNote {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: rgb(156, 163, 175);
+}
+
+.sanctumLink {
+  color: turquoise;
+  text-decoration: none;
+}
+
+.sanctumLink:hover {
+  text-decoration: underline;
+}
+
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: turquoise;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .container {
+    padding-top: 2rem;
+  }
+
+  .main {
+    padding: 0 0.5rem;
+  }
+
+  .apyTable {
+    font-size: 0.75rem;
+  }
+
+  .apyTable th,
+  .apyTable td {
+    padding: 0.5rem;
+  }
+
+  /* Make table scrollable horizontally on mobile */
+  .apyList {
+    margin-top: 1rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pre {
+    font-size: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  /* Hide less important columns on mobile */
+  .apyTable th:nth-child(4),
+  .apyTable td:nth-child(4),
+  .apyTable th:nth-child(6),
+  .apyTable td:nth-child(6) {
+    display: none;
+  }
+} 
