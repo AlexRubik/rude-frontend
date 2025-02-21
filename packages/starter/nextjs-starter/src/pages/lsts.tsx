@@ -53,6 +53,9 @@ const SortedApyData: React.FC = () => {
   const formatLstData = (data: LstResponse | null) => {
     if (!data || !data.lsts) return null;
 
+    // Sort LSTs by APY in descending order
+    const sortedLsts = [...data.lsts].sort((a, b) => b.data.apy - a.data.apy);
+
     return (
       <div className={styles.apyList}>
         <table className={styles.apyTable}>
@@ -60,14 +63,14 @@ const SortedApyData: React.FC = () => {
             <tr>
               <th>Token</th>
               <th>Name</th>
-              <th>Current APY (%)</th>
-              <th>Past Epoch APY (%)</th>
+              <th>5 Epoch Avg APY</th>
+              <th>Past Epoch APY</th>
               <th>TVL (SOL)</th>
               <th>Holders</th>
             </tr>
           </thead>
           <tbody>
-            {data.lsts.map((lst) => (
+            {sortedLsts.map((lst) => (
               <tr key={lst.mint}>
                 <td>
                   <a 
@@ -105,7 +108,7 @@ const SortedApyData: React.FC = () => {
           <div className={styles.updateNote}>
             Data from{' '}
             <a 
-              href="https://app.sanctum.so/lsts"
+              href="https://app.sanctum.so/"
               target="_blank"
               rel="noopener noreferrer"
               className={styles.sanctumLink}
