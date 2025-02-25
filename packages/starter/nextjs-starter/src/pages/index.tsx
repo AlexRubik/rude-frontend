@@ -76,7 +76,7 @@ const Home: NextPage<HomeProps> = () => {
         <div className={styles.container}>
             <Head>
                 <title>Rude Labs</title>
-                <meta name="description" content="Everything you need to arbitrage on the Solana blockchain." />
+                <meta name="description" content="DeFi Suite on Solana." />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 

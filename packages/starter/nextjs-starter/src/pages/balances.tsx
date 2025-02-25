@@ -261,7 +261,7 @@ const Balances: NextPage<HomeProps> = () => {
         <div className={styles.container}>
             <Head>
                 <title>Solana Arbitrage</title>
-                <meta name="description" content="Everything you need to arbitrage on the Solana blockchain." />
+                <meta name="description" content="Solana balance tracker." />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
