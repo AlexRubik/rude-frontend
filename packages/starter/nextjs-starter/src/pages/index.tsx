@@ -91,7 +91,7 @@ const Home: NextPage<HomeProps> = () => {
                     </a>
                     <a href="https://x.com/RudeLabs_io" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
                         <FaXTwitter className={styles.socialIcon} />
-                        <span>Twitter</span>
+                        <span>X</span>
                     </a>
                 </div>
 
