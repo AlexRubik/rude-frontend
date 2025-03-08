@@ -1,6 +1,6 @@
 .container {
   padding: 1rem;
-  padding-top: 3.5rem;
+  padding-top: 5rem;
   min-height: 100vh;
   color: white;
 }
@@ -100,7 +100,7 @@
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   .container {
-    padding-top: 2rem;
+    padding-top: 4rem;
   }
 
   .main {

@@ -250,5 +250,79 @@
 .tooltipContainer:hover {
   background-color: rgba(0, 255, 255, 0.05);
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .dashboardContainer {
+    padding: 1rem;
+    margin: 1rem auto 0;
+    padding-top: 3rem;
+  }
+  
+  .title {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .protocolTitle {
+    font-size: 1.2rem;
+  }
+  
+  .apyTable {
+    font-size: 0.9rem;
+  }
+  
+  .apyTable th, 
+  .apyTable td {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  /* Make table scrollable horizontally on mobile */
+  .protocolTableContainer {
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Adjust modal size for mobile */
+  .rolling24hrModal,
+  .updateInfoModal {
+    max-width: 90%;
+    padding: 1.5rem;
+  }
+  
+  /* Adjust title container for mobile */
+  .titleContainer {
+    flex-direction: column;
+    gap: 5px;
+    padding: 0 10px;
+  }
+  
+  /* Make refresh button smaller on mobile */
+  .refreshButton {
+    font-size: 1rem;
+    margin-left: 5px;
+  }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+  .apyTable {
+    font-size: 0.8rem;
+  }
+  
+  .apyTable th, 
+  .apyTable td {
+    padding: 0.5rem 0.3rem;
+  }
+  
+  .dashboardContainer {
+    padding: 0.75rem;
+    padding-top: 3.5rem;
+  }
+  
+  .title {
+    font-size: 1.1rem;
+  }
+}
     
   
