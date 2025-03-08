@@ -9,6 +9,8 @@ import { AtaRecord } from '../types';
 import { fetchAtaRecords, insertNewAtaRecord } from '../apiFunctions';
 import { Connection, PublicKey } from '@solana/web3.js'
 import { delay, formatTime, getSolBalance, getUTCTime } from '../utils';
+import { FaDiscord, FaGithub, FaYoutube, FaBook, FaXTwitter } from 'react-icons/fa6';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 
 interface Item {
     id: number;
@@ -36,6 +38,7 @@ const Home: NextPage<HomeProps> = () => {
         // sol balance
         const [solBalance, setSolBalance] = useState(0);
         const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+        const [isLpBotDropdownOpen, setIsLpBotDropdownOpen] = useState(false);
         
 
 
@@ -81,6 +84,34 @@ const Home: NextPage<HomeProps> = () => {
             </Head>
 
             <main className={styles.main}>
+                <div className={styles.socialLinks}>
+                    <a href="https://discord.gg/6DTGbMNYuA" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+                        <FaDiscord className={styles.socialIcon} />
+                        <span>Discord</span>
+                    </a>
+                    <a href="https://x.com/RudeLabs_io" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+                        <FaXTwitter className={styles.socialIcon} />
+                        <span>Twitter</span>
+                    </a>
+                </div>
+
+                <div className={styles.dropdownContainer}>
+                    <h2 
+                        className={styles.dropdownTitle}
+                        onClick={() => setIsLpBotDropdownOpen(!isLpBotDropdownOpen)}
+                    >
+                        Auto LP Bot <span className={styles.comingSoon}>Coming Soon</span> {isLpBotDropdownOpen ? '▼' : '▶'}
+                    </h2>
+                    
+                    {isLpBotDropdownOpen && (
+                        <div className={styles.dropdownContent}>
+                            <a href="https://x.com/Trader_Hamilton" target="_blank" rel="noopener noreferrer">
+                                <h2><FaXTwitter className={styles.linkIcon} /> Lead Dev</h2>
+                            </a>
+                        </div>
+                    )}
+                </div>
+
                 <div className={styles.dropdownContainer}>
                     <h2 
                         className={styles.dropdownTitle}
@@ -92,28 +123,22 @@ const Home: NextPage<HomeProps> = () => {
                     {isDropdownOpen && (
                         <div className={styles.dropdownContent}>
                             <a href="https://www.youtube.com/playlist?list=PLMIFlNMah1MnCqDsEJ0P2QhDr93O9KYmF" target="_blank" rel="noopener noreferrer">
-                                <h2>Beginner Video Tutorial</h2>
-                            </a>
-                            <a href="https://discord.gg/6DTGbMNYuA" target="_blank" rel="noopener noreferrer">
-                                <h2>Discord</h2>
-                            </a>
-                            <a href="https://x.com/RudeLabs_io" target="_blank" rel="noopener noreferrer">
-                                <h2>Twitter</h2>
+                                <h2><FaYoutube className={styles.linkIcon} /> Beginner Video Tutorial</h2>
                             </a>
                             <a href="https://github.com/AlexRubik/rude-bot-solana" target="_blank" rel="noopener noreferrer">
-                                <h2>GitHub</h2>
+                                <h2><FaGithub className={styles.linkIcon} /> GitHub</h2>
                             </a>
                             <a href="https://rude-bot-org.gitbook.io/" target="_blank" rel="noopener noreferrer">
-                                <h2>Documentation</h2>
+                                <h2><FaBook className={styles.linkIcon} /> Documentation</h2>
                             </a>
                             <a href="/source-code">
-                                <h2>Purchase Source Code</h2>
+                                <h2><FaExternalLinkAlt className={styles.linkIcon} /> Purchase Source Code</h2>
                             </a>
                             <a href="https://solscan.io/account/3tZPEagumHvtgBhivFJCmhV9AyhBHGW9VgdsK52i4gwP" target="_blank" rel="noopener noreferrer">
-                                <h2>On Chain Program 1</h2>
+                                <h2><FaExternalLinkAlt className={styles.linkIcon} /> On Chain Program 1</h2>
                             </a>
                             <a href="https://solscan.io/account/72FXMcchZS4JRgQ62pKweYhHAkFA19PFoaqAUhWZmEFU" target="_blank" rel="noopener noreferrer">
-                                <h2>On Chain Program 2</h2>
+                                <h2><FaExternalLinkAlt className={styles.linkIcon} /> On Chain Program 2</h2>
                             </a>
                         </div>
                     )}

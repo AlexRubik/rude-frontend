@@ -314,3 +314,66 @@
 .sanctumLink:hover {
   opacity: 0.8;
 }
+
+.comingSoon {
+  background-color: #512da8;
+  color: white;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  font-weight: normal;
+}
+
+.linkIcon {
+  margin-right: 8px;
+  vertical-align: middle;
+  font-size: 1.2em;
+}
+
+.socialLinks {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background-color: #2d2d2d;
+  transition: all 0.2s ease;
+}
+
+.socialLink:hover {
+  background-color: #512da8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.socialIcon {
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
+}
+
+/* Mobile responsiveness for social links */
+@media (max-width: 600px) {
+  .socialLinks {
+    gap: 1rem;
+  }
+  
+  .socialLink {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .socialIcon {
+    font-size: 1.2rem;
+  }
+}
