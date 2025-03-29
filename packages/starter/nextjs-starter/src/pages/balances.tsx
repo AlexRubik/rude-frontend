@@ -27,7 +27,7 @@ const Balances: NextPage<HomeProps> = () => {
     const router = useRouter();
     const { pubkeyStr } = router.query;
 
-    const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=56f5d18f-ce0f-495b-a381-f77fe1e237da', 'confirmed');
+    const connection = new Connection(process.env.NEXT_PUBLIC_RPC_URL || 'https://api.mainnet-beta.solana.com', 'confirmed');
     const connection2 = new Connection('https://api.mainnet-beta.solana.com', 'confirmed');
 
 

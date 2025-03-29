@@ -23,7 +23,7 @@ const SortedApyData: React.FC = () => {
 
     const fetchEpochInfo = async () => {
         try {
-          const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=1e853175-d3ec-4696-b09c-510e81011a8d', 'confirmed');
+          const connection = new Connection(process.env.NEXT_PUBLIC_RPC_URL || 'https://api.mainnet-beta.solana.com', 'confirmed');
           const info = await connection.getEpochInfo();
           
           const slotsRemaining = info.slotsInEpoch - info.slotIndex;

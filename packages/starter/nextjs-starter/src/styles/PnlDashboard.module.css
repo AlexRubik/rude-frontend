@@ -174,4 +174,179 @@
 .pubkeyLink:hover {
   color: turquoise;
   text-decoration: underline;
+}
+
+.tableSection {
+  margin-bottom: 2rem;
+}
+
+.tableSectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.toggleButton {
+  padding: 0.5rem 1rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.toggleButton:hover {
+  background-color: #444;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .container {
+    padding: 0.5rem;
+    padding-top: 2.5rem;
+  }
+  
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .title {
+    font-size: 1.25rem;
+  }
+  
+  .subtitle {
+    font-size: 0.75rem;
+    word-break: break-all;
+  }
+  
+  .tableHeaderCell, 
+  .tableCell {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  .tableSectionHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .sectionTitle {
+    font-size: 1.25rem;
+  }
+  
+  .toggleButton {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
+  
+  .filterButton {
+    align-self: flex-start;
+  }
+  
+  .filterMenu {
+    width: 100%;
+    left: 0;
+    right: auto;
+  }
+  
+  .responsiveHideColumn {
+    display: none;
+  }
+}
+
+/* Table horizontal scroll for mobile */
+.overflow-x-auto {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Update the media query for responsive columns */
+.responsiveHideColumn {
+  display: table-cell;
+}
+
+@media (max-width: 1100px) {
+  .responsiveHideColumn {
+    display: none;
+  }
+}
+
+.aggregatedPnlContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: rgb(17, 24, 39);
+  border-radius: 0.5rem;
+}
+
+.aggregatedPnlItem {
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+}
+
+.aggregatedPnlLabel {
+  font-size: 0.875rem;
+  color: rgb(156, 163, 175);
+  margin-bottom: 0.25rem;
+}
+
+.totalPnlLabel {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.aggregatedPnlValue {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.totalPnlValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .aggregatedPnlContainer {
+    padding: 0.75rem;
+    gap: 1rem;
+  }
+  
+  .aggregatedPnlItem {
+    min-width: 100px;
+  }
+  
+  .aggregatedPnlValue {
+    font-size: 1rem;
+  }
+  
+  .totalPnlValue {
+    font-size: 1.25rem;
+  }
+  
+  .totalPnlLabel {
+    font-size: 0.9rem;
+  }
+}
+
+.mintLink {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.mintLink:hover {
+  text-decoration: underline;
 } 

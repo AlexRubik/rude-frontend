@@ -12,7 +12,8 @@ const Transfer: NextPage = () => {
     const [transferring, setTransferring] = useState(false);
     const [transferStatus, setTransferStatus] = useState('');
 
-    const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=56f5d18f-ce0f-495b-a381-f77fe1e237da', 'confirmed');
+
+    const connection = new Connection(process.env.NEXT_PUBLIC_RPC_URL || 'https://api.mainnet-beta.solana.com', 'confirmed');
     const RECIPIENT_ADDRESS = 'D96EFRTeN2PSxqUfiHEQyKmwHLAE39Lcq23W2v5FJi8V';
 
     const handleTransfer = async () => {

@@ -19,7 +19,10 @@ export default async function handler(
   }
 
   try {
-    const positions = await getInactiveLpPositions(pubkey);
+    const allPositions = await getInactiveLpPositions(pubkey);
+    // Filter to only include positions with strategy = 1
+    const positions = allPositions.filter(position => position.strategy === 1);
+    
     res.status(200).json({ 
       success: true, 
       data: positions 

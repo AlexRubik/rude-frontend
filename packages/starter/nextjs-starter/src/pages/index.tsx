@@ -25,7 +25,7 @@ interface Item {
 
 const Home: NextPage<HomeProps> = () => {
 
-    const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=56f5d18f-ce0f-495b-a381-f77fe1e237da', 'confirmed');
+    const connection = new Connection(process.env.NEXT_PUBLIC_RPC_URL || 'https://api.mainnet-beta.solana.com', 'confirmed');
     const connection2 = new Connection('https://mainnet.helius-rpc.com/?api-key=00a5355d-b3d8-4780-be65-58e83e1e0132', 'confirmed');
 
 

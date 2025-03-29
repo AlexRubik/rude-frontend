@@ -28,7 +28,7 @@ const pool = new Pool({
   port: 5432,
 });
 
-const connection = new Connection('https://mainnet.helius-rpc.com/?api-key=56f5d18f-ce0f-495b-a381-f77fe1e237da', 'confirmed');
+const connection = new Connection(process.env.NEXT_PUBLIC_RPC_URL || 'https://api.mainnet-beta.solana.com', 'confirmed');
 
 
 export function delay(ms: number): Promise<void> {
