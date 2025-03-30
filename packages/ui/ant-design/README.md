@@ -17,7 +17,7 @@ See the [example](https://github.com/anza-xyz/wallet-adapter/tree/master/package
                     options: {
                         lessLoaderOptions: {
                             lessOptions: {
-                                modifyVars: { '@primary-color': '#512da8' },
+                                modifyVars: { '@primary-color': '#fd7327' },
                                 javascriptEnabled: true,
                             },
                         },

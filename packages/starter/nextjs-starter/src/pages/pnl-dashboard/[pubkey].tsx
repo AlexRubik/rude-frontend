@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { NextPage } from 'next';
 import Head from 'next/head';
@@ -46,6 +46,11 @@ const PnlDashboard: NextPage = () => {
     perp_pnl: number;
     lp_pnl: number;
   } | null>(null);
+  const [showColumnSelector, setShowColumnSelector] = useState(false);
+  const [showHedgeColumnSelector, setShowHedgeColumnSelector] = useState(false);
+  const [showLpColumnSelector, setShowLpColumnSelector] = useState(false);
+  const hedgeFilterRef = useRef<HTMLDivElement>(null);
+  const lpFilterRef = useRef<HTMLDivElement>(null);
 
   const formatUSD = (value: number | null | string) => {
     if (value === null || value === undefined) return 'N/A';
@@ -288,8 +293,30 @@ const PnlDashboard: NextPage = () => {
     ));
   };
 
+  const toggleColumnVisibility = (columnKey: string) => {
+    toggleHedgeColumn(columnKey);
+    toggleColumn(columnKey as keyof LpPosition);
+  };
+
   const displayedLpPositions = showAllLpPositions ? positions : positions.slice(0, 5);
   const displayedHedgePositions = showAllHedgePositions ? hedgePositions : hedgePositions.slice(0, 5);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (hedgeFilterRef.current && !hedgeFilterRef.current.contains(event.target as Node)) {
+        setShowHedgeColumnSelector(false);
+      }
+      if (lpFilterRef.current && !lpFilterRef.current.contains(event.target as Node)) {
+        setShowLpColumnSelector(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -319,143 +346,177 @@ const PnlDashboard: NextPage = () => {
 
       <div className={styles.main}>
         <div className={styles.header}>
-          <div>
-            <div className={styles.headerTop}>
-              <Link href="/pnl-dashboard" className={styles.backButton}>
+          <div className={styles.backButtonWrapper}>
+            <Link href="/pnl-dashboard" passHref>
+              <button className={styles.backButton}>
                 ← Back
-              </Link>
-              <h1 className={styles.title}>PnL Dashboard</h1>
-            </div>
-            <h2 className={styles.subtitle}>
-              Wallet:{' '}
-              <a 
-                href={`https://solscan.io/account/${pubkey}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.pubkeyLink}
-              >
-                {pubkey}
-              </a>
-            </h2>
+              </button>
+            </Link>
           </div>
+          
+          <a 
+            href={`https://solscan.io/account/${pubkey}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.pubkeyLink}
+          >
+            {pubkey}
+          </a>
+          
+          <div style={{ width: '80px' }}></div> {/* Spacer for alignment */}
+        </div>
 
-          <div className="relative">
-            <button
-              onClick={() => setShowFilterMenu(!showFilterMenu)}
-              className={styles.filterButton}
-            >
-              Columns ▼
-            </button>
-
-            {showFilterMenu && (
-              <div className={styles.filterMenu}>
-                <div className="p-2">
-                  {columns.map(column => (
-                    <label key={column.key} className={styles.filterMenuItem}>
-                      <input
-                        type="checkbox"
-                        checked={column.visible}
-                        onChange={() => toggleColumn(column.key)}
-                        className="mr-2"
-                      />
-                      <span>{column.label}</span>
-                    </label>
-                  ))}
-                </div>
+        {/* Hedge Positions Section */}
+        <div className={styles.tableSection}>
+          <div className={styles.tableSectionHeader}>
+            <h2 className={styles.sectionTitle}>Hedge Positions</h2>
+            
+            <div className={styles.headerControls}>
+              {hedgePositions.length > 5 && (
+                <button 
+                  onClick={() => setShowAllHedgePositions(!showAllHedgePositions)}
+                  className={styles.toggleButton}
+                >
+                  {showAllHedgePositions ? 'Show Less' : 'Show All'}
+                </button>
+              )}
+              
+              <div className={styles.filterContainer} ref={hedgeFilterRef}>
+                <button 
+                  className={styles.filterButton}
+                  onClick={() => setShowHedgeColumnSelector(!showHedgeColumnSelector)}
+                >
+                  Filters
+                </button>
+                {showHedgeColumnSelector && (
+                  <div className={styles.filterMenu}>
+                    {hedgeColumns.map((column) => (
+                      <div 
+                        key={column.key} 
+                        className={styles.filterMenuItem}
+                        onClick={() => toggleColumnVisibility(column.key)}
+                      >
+                        <input 
+                          type="checkbox" 
+                          checked={column.visible} 
+                          readOnly 
+                        />
+                        <span style={{ marginLeft: '8px' }}>{column.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
+            </div>
+          </div>
+          
+          {aggregatedPnl && (
+            <div className={styles.aggregatedPnlContainer}>
+              <div className={`${styles.aggregatedPnlItem} ${aggregatedPnl.total_pnl >= 0 ? styles.positive : styles.negative}`}>
+                <span className={`${styles.aggregatedPnlLabel} ${styles.totalPnlLabel}`}>Total PnL:</span>
+                <span className={`${styles.aggregatedPnlValue} ${styles.totalPnlValue}`}>{formatUSD(aggregatedPnl.total_pnl)}</span>
+              </div>
+              <div className={`${styles.aggregatedPnlItem} ${aggregatedPnl.lp_pnl >= 0 ? styles.positive : styles.negative}`}>
+                <span className={styles.aggregatedPnlLabel}>LP PnL:</span>
+                <span className={styles.aggregatedPnlValue}>{formatUSD(aggregatedPnl.lp_pnl)}</span>
+              </div>
+              <div className={`${styles.aggregatedPnlItem} ${aggregatedPnl.perp_pnl >= 0 ? styles.positive : styles.negative}`}>
+                <span className={styles.aggregatedPnlLabel}>Perp PnL:</span>
+                <span className={styles.aggregatedPnlValue}>{formatUSD(aggregatedPnl.perp_pnl)}</span>
+              </div>
+            </div>
+          )}
+          
+          <div className="overflow-x-auto">
+            <table className={styles.table}>
+              <thead className={styles.tableHeader}>
+                <tr>
+                  {hedgeColumns.filter(col => col.visible).map(column => (
+                    <th
+                      key={column.key}
+                      className={`${styles.tableHeaderCell} ${
+                        ['lp_starting_usd_value', 'lp_closing_usd_value', 'lp_pnl_usd', 'perp_usdc_collateral_amount', 'perp_pnl', 'lp_position_start_time', 'lp_position_end_time'].includes(column.key as string) 
+                          ? styles.responsiveHideColumn 
+                          : ''
+                      }`}
+                    >
+                      {column.label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {displayedHedgePositions.map((position) => (
+                  <tr 
+                    key={position.lp_position_mint_address}
+                    className={`${styles.tableRow} ${
+                      position.total_pnl >= 0 ? styles.positive : styles.negative
+                    }`}
+                  >
+                    {hedgeColumns
+                      .filter(col => col.visible)
+                      .map(column => (
+                        <td 
+                          key={column.key}
+                          className={`${styles.tableCell} ${
+                            ['lp_starting_usd_value', 'lp_closing_usd_value', 'lp_pnl_usd', 'perp_usdc_collateral_amount', 'perp_pnl', 'lp_position_start_time', 'lp_position_end_time'].includes(column.key as string) 
+                              ? styles.responsiveHideColumn 
+                              : ''
+                          }`}
+                        >
+                          {column.format(position[column.key as keyof HedgePosition])}
+                        </td>
+                      ))
+                    }
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
-        {/* Hedge Positions Table */}
-        {hedgePositions.length > 0 && (
-          <div className={styles.tableSection}>
-            <div className={styles.tableSectionHeader}>
-              <h2 className={styles.sectionTitle}>Hedge Positions</h2>
-              <button 
-                onClick={() => setShowAllHedgePositions(!showAllHedgePositions)}
-                className={styles.toggleButton}
-              >
-                {showAllHedgePositions ? 'Show Less' : 'Show All'}
-              </button>
-            </div>
-            
-            {aggregatedPnl && (
-              <div className={styles.aggregatedPnlContainer}>
-                <div className={`${styles.aggregatedPnlItem} ${aggregatedPnl.total_pnl >= 0 ? styles.positive : styles.negative}`}>
-                  <span className={`${styles.aggregatedPnlLabel} ${styles.totalPnlLabel}`}>Total PnL:</span>
-                  <span className={`${styles.aggregatedPnlValue} ${styles.totalPnlValue}`}>{formatUSD(aggregatedPnl.total_pnl)}</span>
-                </div>
-                <div className={`${styles.aggregatedPnlItem} ${aggregatedPnl.lp_pnl >= 0 ? styles.positive : styles.negative}`}>
-                  <span className={styles.aggregatedPnlLabel}>LP PnL:</span>
-                  <span className={styles.aggregatedPnlValue}>{formatUSD(aggregatedPnl.lp_pnl)}</span>
-                </div>
-                <div className={`${styles.aggregatedPnlItem} ${aggregatedPnl.perp_pnl >= 0 ? styles.positive : styles.negative}`}>
-                  <span className={styles.aggregatedPnlLabel}>Perp PnL:</span>
-                  <span className={styles.aggregatedPnlValue}>{formatUSD(aggregatedPnl.perp_pnl)}</span>
-                </div>
-              </div>
-            )}
-            
-            <div className="overflow-x-auto">
-              <table className={styles.table}>
-                <thead className={styles.tableHeader}>
-                  <tr>
-                    {hedgeColumns.filter(col => col.visible).map(column => (
-                      <th
-                        key={column.key}
-                        className={`${styles.tableHeaderCell} ${
-                          ['lp_starting_usd_value', 'lp_closing_usd_value', 'lp_pnl_usd', 'perp_usdc_collateral_amount', 'perp_pnl', 'lp_position_start_time', 'lp_position_end_time'].includes(column.key as string) 
-                            ? styles.responsiveHideColumn 
-                            : ''
-                        }`}
-                      >
-                        {column.label}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {displayedHedgePositions.map((position) => (
-                    <tr 
-                      key={position.lp_position_mint_address}
-                      className={`${styles.tableRow} ${
-                        position.total_pnl >= 0 ? styles.positive : styles.negative
-                      }`}
-                    >
-                      {hedgeColumns
-                        .filter(col => col.visible)
-                        .map(column => (
-                          <td 
-                            key={column.key}
-                            className={`${styles.tableCell} ${
-                              ['lp_starting_usd_value', 'lp_closing_usd_value', 'lp_pnl_usd', 'perp_usdc_collateral_amount', 'perp_pnl', 'lp_position_start_time', 'lp_position_end_time'].includes(column.key as string) 
-                                ? styles.responsiveHideColumn 
-                                : ''
-                            }`}
-                          >
-                            {column.format(position[column.key as keyof HedgePosition])}
-                          </td>
-                        ))
-                      }
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-
-        {/* LP Positions Table */}
+        {/* LP Positions Section */}
         <div className={styles.tableSection}>
           <div className={styles.tableSectionHeader}>
             <h2 className={styles.sectionTitle}>LP Positions</h2>
-            <button 
-              onClick={() => setShowAllLpPositions(!showAllLpPositions)}
-              className={styles.toggleButton}
-            >
-              {showAllLpPositions ? 'Show Less' : 'Show All'}
-            </button>
+            
+            <div className={styles.headerControls}>
+              {positions.length > 5 && (
+                <button 
+                  onClick={() => setShowAllLpPositions(!showAllLpPositions)}
+                  className={styles.toggleButton}
+                >
+                  {showAllLpPositions ? 'Show Less' : 'Show All'}
+                </button>
+              )}
+              
+              <div className={styles.filterContainer} ref={lpFilterRef}>
+                <button 
+                  className={styles.filterButton}
+                  onClick={() => setShowLpColumnSelector(!showLpColumnSelector)}
+                >
+                  Filters
+                </button>
+                {showLpColumnSelector && (
+                  <div className={styles.filterMenu}>
+                    {columns.map((column) => (
+                      <div 
+                        key={column.key} 
+                        className={styles.filterMenuItem}
+                        onClick={() => toggleColumnVisibility(column.key)}
+                      >
+                        <input 
+                          type="checkbox" 
+                          checked={column.visible} 
+                          readOnly 
+                        />
+                        <span style={{ marginLeft: '8px' }}>{column.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
           
           <div className="overflow-x-auto">

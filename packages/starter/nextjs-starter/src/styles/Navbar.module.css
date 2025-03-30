@@ -1,15 +1,16 @@
 .link {
     color: #dfdfdf;
     text-decoration: underline;
-    text-decoration-color: #512da8;
+    text-decoration-color: #fd7327;
     margin: 5px;
     cursor: pointer;
+    transition: color 0.3s ease, border-color 0.3s ease;
   }
   .link:hover,
   .link:focus,
   .link:active {
-    color: #512da8;
-    border-color: #512da8;
+    color: #fd7327;
+    border-color: #fd7327;
   }
 
 
@@ -59,7 +60,7 @@
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0.5rem;
-  color: #dfdfdf;
+  color: #fd7327;
 }
 
 @media (max-width: 768px) {
@@ -68,24 +69,57 @@
   }
 
   .navLinks {
-    display: none;
+    display: flex;
     position: absolute;
-    top: 65px;  /* Matches your navbar height */
-    left: 0;
-    right: 0;
-    background: #313131;  /* Matches your navbar background */
+    top: 85px;  /* Matches your navbar height */
+    left: 50%;  /* Center horizontally */
+    transform: translateX(-90%);  /* Center horizontally */
+    width: 90%;  /* Take up 90% of the screen width */
+    max-width: 200px;  /* Maximum width */
+    background: #313131f6;  /* Matches your navbar background */
     flex-direction: column;
-    padding: 1rem;
+    padding: 0;
     z-index: 1000;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    border-radius: 8px;  /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);  /* Add shadow for depth */
+    transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
   }
 
   .showMobile {
-    display: flex;
+    max-height: 500px; /* Adjust based on your content */
+    opacity: 1;
+    padding: 1rem;
   }
 
   .link {
     padding: 0.5rem 0;
     color: #dfdfdf;  /* Matches your existing link color */
+  }
+  
+  .dropdown {
+    width: 100%;
+  }
+
+  .dropdownContent {
+    position: static;
+    box-shadow: none;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+  }
+  
+  .dropdownContent.show {
+    max-height: 300px; /* Adjust based on your content */
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  
+  .dropdownLink {
+    padding-left: 32px;
   }
 }
 
@@ -105,6 +139,16 @@
   z-index: 1;
   border-radius: 4px;
   padding: 8px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+}
+
+.dropdownContent.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 .dropdownLink {
@@ -117,8 +161,9 @@
 }
 
 .dropdownLink:hover {
-  background-color: #333;
-  color: #00ffff;
+  /* background-color: #333; */
+  color: #fd7327;
+  transition: color 0.3s ease, border-color 0.3s ease;
 }
 
 @media (max-width: 768px) {
@@ -132,3 +177,4 @@
     padding-left: 32px;
   }
 }
+

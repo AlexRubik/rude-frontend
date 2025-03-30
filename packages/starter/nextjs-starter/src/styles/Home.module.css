@@ -29,7 +29,7 @@
 }
 
 .title a {
-  color: #512da8;
+  color: #fd7327;
   text-decoration: none;
 }
 
@@ -91,23 +91,23 @@
 }
 
 .a {
-  color: #512da8;
+  color: #fd7327;
   text-decoration: underline;
-  text-decoration-color: #512da8;
+  text-decoration-color: #fd7327;
   margin: 5px;
 }
 .a:hover,
 .a:focus,
 .a:active {
-  color: #512da8;
-  border-color: #512da8;
+  color: #fd7327;
+  border-color: #fd7327;
 }
 
 .card:hover,
 .card:focus,
 .card:active {
-  color: #512da8;
-  border-color: #512da8;
+  color: #fd7327;
+  border-color: #fd7327;
 }
 
 .card h2 {
@@ -182,7 +182,7 @@
 
 .dropdownContainer {
     width: 100%;
-    max-width: 600px;
+    max-width: 300px;
     margin: 0 auto;
 }
 
@@ -191,8 +191,8 @@
     padding: 1rem;
     background-color: #2d2d2d;
     border-radius: 8px;
-    margin-bottom: 0;
-    transition: background-color 0.2s;
+    margin-bottom: 0.5rem;
+    transition: background-color 0.4s;
     text-align: center;
 }
 
@@ -205,6 +205,7 @@
     border-radius: 8px;
     margin-top: 0.5rem;
     padding: 1rem;
+    transition: max-height 0.5s ease, opacity 0.3s ease, padding 0.3s ease, margin-top 0.3s ease;
 }
 
 .dropdownContent a {
@@ -216,7 +217,7 @@
 }
 
 .dropdownContent a:hover {
-    color: #00ffff;
+    color: #fd7327;
 }
 
 .dropdownContent h2 {
@@ -235,7 +236,7 @@
   width: 50px;
   height: 50px;
   border: 3px solid #f3f3f3;
-  border-top: 3px solid #00ffff;
+  border-top: 3px solid #fd7327;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -264,7 +265,7 @@
 .apyTable th {
   background: rgba(0, 0, 0, 0.3);
   font-weight: bold;
-  color: #00ffff;
+  color: #fd7327;
 }
 
 .apyTable tr:hover {
@@ -294,7 +295,7 @@
 }
 
 .tokenLink:hover {
-  color: #00ffff;
+  color: #fd7327;
 }
 
 .updateNote {
@@ -306,7 +307,7 @@
 }
 
 .sanctumLink {
-  color: #00ffff;
+  color: #fd7327;
   text-decoration: none;
   transition: opacity 0.2s ease;
 }
@@ -316,7 +317,7 @@
 }
 
 .comingSoon {
-  background-color: #512da8;
+  background-color: #fd7327;
   color: white;
   font-size: 0.7rem;
   padding: 0.2rem 0.5rem;
@@ -348,11 +349,11 @@
   padding: 0.5rem 1rem;
   border-radius: 8px;
   background-color: #2d2d2d;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .socialLink:hover {
-  background-color: #512da8;
+  background-color: #fd7327;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -376,4 +377,27 @@
   .socialIcon {
     font-size: 1.2rem;
   }
+}
+
+.logoContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.logoContainer img {
+  animation: float 3s ease-in-out infinite;
 }

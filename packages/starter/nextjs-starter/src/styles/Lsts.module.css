@@ -43,7 +43,7 @@
 }
 
 .tokenLink {
-  color: turquoise;
+  color: #ffde59;
   text-decoration: none;
 }
 
@@ -67,7 +67,7 @@
 }
 
 .sanctumLink {
-  color: turquoise;
+  color: #ffde59;
   text-decoration: none;
 }
 
@@ -84,7 +84,7 @@
 
 .spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: turquoise;
+  border-left-color: #ffde59;
   border-radius: 50%;
   width: 40px;
   height: 40px;

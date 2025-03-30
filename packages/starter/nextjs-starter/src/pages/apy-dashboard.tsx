@@ -213,6 +213,11 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
 
       <div className={styles.titleContainer}>
         <h1 className={styles.title}>
+          <img 
+            src="/solanaLogoMark.svg" 
+            alt="Solana Logo" 
+            className={styles.solanaLogo}
+          />
           Lending APY Dashboard
           <button 
             onClick={refreshData} 

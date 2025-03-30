@@ -70,23 +70,38 @@ const Navbar = () => {
                 className={styles.dropdown}
                 onMouseEnter={() => setShowDropdown(true)}
                 onMouseLeave={() => setShowDropdown(false)}
+                onClick={() => {
+                  // For mobile: toggle dropdown on click
+                  if (window.innerWidth <= 768) {
+                    setShowDropdown(!showDropdown);
+                  }
+                }}
               >
                 <h4 className={styles.link}>More</h4>
-                {showDropdown && (
-                  <div className={styles.dropdownContent}>
-                    <Link href="/balances">
-                      <h4 className={styles.dropdownLink}>Balance Tracker</h4>
-                    </Link>
-                    <Link href="/trading-calc">
-                      <h4 className={styles.dropdownLink}>Trading Calc</h4>
-                    </Link>
-                  </div>
-                )}
+                <div className={`${styles.dropdownContent} ${showDropdown ? styles.show : ''}`}>
+                  <Link href="/balances">
+                    <h4 className={styles.dropdownLink}>Balance Tracker</h4>
+                  </Link>
+                  <Link href="/trading-calc">
+                    <h4 className={styles.dropdownLink}>Trading Calc</h4>
+                  </Link>
+                  <Link href="/pnl-dashboard">
+                    <h4 className={styles.dropdownLink}>LP Stats Alpha</h4>
+                  </Link>
+                </div>
               </div>
             </div>
 
             <div className={styles.navbarRight}>
-              <WalletMultiButtonDynamic />
+              <WalletMultiButtonDynamic style={
+                { 
+                backgroundColor: '#d35033',
+                height: '40px',
+                fontSize: '14px'
+
+
+               }
+               }/>
             </div>
           </nav>
         </div>
