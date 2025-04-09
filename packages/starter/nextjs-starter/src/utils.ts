@@ -1,5 +1,10 @@
-import { Connection, PublicKey } from '@solana/web3.js';
+import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 import * as TOML from '@iarna/toml';
+import { AnchorProvider, BN, Program } from '@coral-xyz/anchor';
+import NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet';
+import { IDL as ADRENA_IDL } from './adrena';
+import BigNumber from 'bignumber.js';
+import { AllStakingStats, UserStakingExtended } from './types';
 
 export function delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -187,3 +192,136 @@ export async function fetchLstData(): Promise<LstResponse> {
   }
 }
 
+export function nativeToUi(nb: BN, decimals: number): number {
+  // stop displaying at hundred thousandth
+  return new BigNumber(nb.toString()).shiftedBy(-decimals).toNumber();
+}
+
+export async function getAccumulatedRewards() {
+
+  const adrenda_program_id = new PublicKey("13gDzEXCdocbj8iAiqrScGo47NiSuYENGsRqi3SEAwet");
+
+  const lmTokenMint = PublicKey.findProgramAddressSync(
+    [Buffer.from("lm_token_mint")],
+    adrenda_program_id,
+  )[0];
+
+  const stakingPda = PublicKey.findProgramAddressSync(
+    [Buffer.from("staking"), lmTokenMint.toBuffer()],
+    adrenda_program_id,
+  )[0];
+
+  const stakingLmRewardVault = PublicKey.findProgramAddressSync(
+    [Buffer.from("staking_reward_token_vault"), stakingPda.toBuffer()],
+    adrenda_program_id,
+  )[0];
+
+  const connection = new Connection(process.env.NEXT_PUBLIC_RPC_URL || 'https://api.mainnet-beta.solana.com');
+
+  const usdcRewardsVaultBal = await connection.getTokenAccountBalance(stakingLmRewardVault);
+  // log the pubkey string
+  console.log(stakingLmRewardVault.toBase58());
+
+  console.log(usdcRewardsVaultBal.value.uiAmount);
+  return usdcRewardsVaultBal.value.uiAmount;
+
+}
+
+
+// export async function adrenaFetch() {
+//   const DEFAULT_PERPS_USER = Keypair.fromSecretKey(
+//     Uint8Array.from([
+//       130, 82, 70, 109, 220, 141, 128, 34, 238, 5, 80, 156, 116, 150, 24, 45, 33,
+//       132, 119, 244, 40, 40, 201, 182, 195, 179, 90, 172, 51, 27, 110, 208, 61,
+//       23, 43, 217, 131, 209, 127, 113, 93, 139, 35, 156, 34, 16, 94, 236, 175,
+//       232, 174, 79, 209, 223, 86, 131, 148, 188, 126, 217, 19, 248, 236, 107,
+//     ]),
+//   );
+
+//   const connection = new Connection("https://api.mainnet-beta.solana.com");
+
+//   const readOnlyProvider = new AnchorProvider(
+//     connection,
+//     new NodeWallet(DEFAULT_PERPS_USER),
+//     {
+//       commitment: "processed",
+//       skipPreflight: true,
+//     },
+//   );
+
+//   const adrenda_program_id = new PublicKey("13gDzEXCdocbj8iAiqrScGo47NiSuYENGsRqi3SEAwet");
+
+//   const program = new Program(ADRENA_IDL, adrenda_program_id, readOnlyProvider);
+
+//   const allStakingInit = await program.account.userStaking.all();
+
+//   const allStaking = allStakingInit.map((staking) => ({
+//     pubkey: staking.publicKey,
+//     ...staking.account,
+//   }));
+
+//   const allStakingStats: AllStakingStats = {
+//     byDurationByAmount: {
+//         ADX: {
+//             liquid: 0,
+//             totalLocked: 0,
+//             locked: {},
+//         },
+//         ALP: {
+//             liquid: 0,
+//             totalLocked: 0,
+//             locked: {},
+//         },
+//     },
+//     byRemainingTime: {
+//         ADX: [],
+//         ALP: [],
+//     },
+// };
+
+// allStaking.forEach((staking: UserStakingExtended) => {
+//     const stakingType = staking.stakingType === 1 ? 'ADX' : 'ALP';
+//     const stakingDecimals = stakingType === 'ADX' ? 6 : 6;
+
+//     // Handle the remaining time stats
+//     {
+//         staking.lockedStakes.forEach((lockedStake) => {
+//             // Ignore non-locked stakes
+//             if (lockedStake.endTime.isZero()) {
+//                 return;
+//             }
+
+//             allStakingStats.byRemainingTime[stakingType].push({
+//                 stake: staking.pubkey.toBase58(),
+//                 endTime: lockedStake.endTime.toNumber(),
+//                 tokenAmount: nativeToUi(lockedStake.amount, stakingDecimals),
+//             });
+//         });
+//     }
+
+//     // Handle the duration and amount stats
+//     {
+//         allStakingStats.byDurationByAmount[stakingType].liquid += nativeToUi(staking.liquidStake.amount, stakingDecimals);
+
+//         staking.lockedStakes.forEach((lockedStake) => {
+//             // Ignore non-locked stakes
+//             if (lockedStake.endTime.isZero() || lockedStake.endTime.toNumber() < Date.now() / 1000) {
+//                 return;
+//             }
+
+//             const lockedDurationInDays = lockedStake.lockDuration.toNumber() / 3600 / 24;
+
+//             allStakingStats.byDurationByAmount[stakingType].locked[lockedDurationInDays] = allStakingStats.byDurationByAmount[stakingType].locked[lockedDurationInDays] || {
+//                 total: 0,
+//             };
+//             allStakingStats.byDurationByAmount[stakingType].locked[lockedDurationInDays][staking.pubkey.toBase58()] = allStakingStats.byDurationByAmount[stakingType].locked[lockedDurationInDays][staking.pubkey.toBase58()] || 0;
+//             const amount = nativeToUi(lockedStake.amount, stakingDecimals);
+
+//             allStakingStats.byDurationByAmount[stakingType].locked[lockedDurationInDays].total += amount;
+//             allStakingStats.byDurationByAmount[stakingType].totalLocked += amount;
+//             allStakingStats.byDurationByAmount[stakingType].locked[lockedDurationInDays][staking.pubkey.toBase58()] += amount;
+//         });
+//     }
+// });
+
+// }
