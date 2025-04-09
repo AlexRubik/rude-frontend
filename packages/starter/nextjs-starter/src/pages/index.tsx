@@ -8,7 +8,7 @@ import { UserContext } from '../UserContext';
 import { AtaRecord } from '../types';
 import { fetchAtaRecords, insertNewAtaRecord } from '../apiFunctions';
 import { Connection, PublicKey } from '@solana/web3.js'
-import { delay, formatTime, getAccumulatedRewards, getSolBalance, getUTCTime } from '../utils';
+import { delay, getSolBalance, getUTCTime } from '../utils';
 import { FaDiscord, FaGithub, FaYoutube, FaBook, FaXTwitter } from 'react-icons/fa6';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 

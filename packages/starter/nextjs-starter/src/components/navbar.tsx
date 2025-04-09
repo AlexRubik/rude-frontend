@@ -88,6 +88,9 @@ const Navbar = () => {
                   <Link href="/pnl-dashboard">
                     <h4 className={styles.dropdownLink}>LP Stats Alpha</h4>
                   </Link>
+                  <Link href="/adrena">
+                    <h4 className={styles.dropdownLink}>Adrena Stats</h4>
+                  </Link>
                 </div>
               </div>
             </div>
