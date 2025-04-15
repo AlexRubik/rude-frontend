@@ -1,6 +1,5 @@
 import { Connection, Keypair, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import * as TOML from '@iarna/toml';
 import { AnchorProvider, BN, Program } from '@coral-xyz/anchor';
 import NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet';
 import { IDL as ADRENA_IDL } from './adrena';
