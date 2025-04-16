@@ -102,7 +102,8 @@ const Home: NextPage<HomeProps> = () => {
                         style={{ 
                             objectFit: 'contain',
                             opacity: logoLoaded ? 1 : 0,
-                            transition: 'opacity 0.9s ease-in'
+                            transition: 'opacity 0.9s ease-in',
+                            marginTop: '1.6rem'
                         }}
                         className={styles.floatingLogo}
                         onLoadingComplete={() => setLogoLoaded(true)}

@@ -14,10 +14,10 @@ import styles from '../styles/Loading.module.css';
 import { ChainContextProvider } from '../context/ChainContextProvider';
 import { SelectedWalletAccountContextProvider } from '../context/SelectedWalletAccountProvider';
 import { RpcContextProvider } from '../context/RpcContextProvider';
-import { Theme } from '@radix-ui/themes';
+import { Theme } from '@radix-ui/themes'; // TODO: remove all radix
 
 // Use require instead of import since order matters
-require('@solana/wallet-adapter-react-ui/styles.css');
+
 require('../styles/globals.css');
 
 
@@ -69,13 +69,13 @@ const App: FC<{ Component: FC<any>; pageProps: any }> = ({ Component, pageProps 
                     <div className={styles.loadingSpinner}></div>
                 </div>
             )}
-            <Theme>
+            
             <Context>
                 <Navbar />
 
                 <Content Component={Component} pageProps={pageProps} />
             </Context>
-            </Theme>
+            
         </>
 
     );
