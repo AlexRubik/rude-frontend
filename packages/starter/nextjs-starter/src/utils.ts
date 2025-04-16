@@ -4,7 +4,7 @@ import { AnchorProvider, BN, Program } from '@coral-xyz/anchor';
 import NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet';
 import { IDL as ADRENA_IDL } from './adrena';
 import BigNumber from 'bignumber.js';
-import { AllStakingStats, UserStakingExtended } from './types';
+
 
 export function delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));

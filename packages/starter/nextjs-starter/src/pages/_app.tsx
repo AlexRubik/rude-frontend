@@ -11,6 +11,10 @@ import dynamic from 'next/dynamic';
 import Navbar from '../components/navbar';
 import { Router } from 'next/router';
 import styles from '../styles/Loading.module.css';
+import { ChainContextProvider } from '../context/ChainContextProvider';
+import { SelectedWalletAccountContextProvider } from '../context/SelectedWalletAccountProvider';
+import { RpcContextProvider } from '../context/RpcContextProvider';
+import { Theme } from '@radix-ui/themes';
 
 // Use require instead of import since order matters
 require('@solana/wallet-adapter-react-ui/styles.css');
@@ -19,44 +23,21 @@ require('../styles/globals.css');
 
 
 const Context: FC<{ children: ReactNode }> = ({ children }) => {
-    // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
-    const network = WalletAdapterNetwork.Mainnet;
-
-    // You can also provide a custom RPC endpoint.
-    //clusterApiUrl(network)
-    const endpoint = useMemo(() => clusterApiUrl(network), [network]);
-
-    // @solana/wallet-adapter-wallets includes all the adapters but supports tree shaking and lazy loading --
-    // Only the wallets you configure here will be compiled into your application, and only the dependencies
-    // of wallets that your users connect to will be loaded.
-    const wallets = useMemo(
-        () => [
-            new PhantomWalletAdapter(),
-            new SolflareWalletAdapter({ network }),
-            new TorusWalletAdapter(),
-            new LedgerWalletAdapter(),
-            new SolflareWalletAdapter({ network }),
-        ],
-        [network]
-    );
 
 
     return (
-            <ConnectionProvider endpoint={endpoint}>
-                <WalletProvider wallets={wallets} autoConnect>
-                    <WalletModalProvider>
+            <ChainContextProvider>
+                <SelectedWalletAccountContextProvider>
+                    <RpcContextProvider>
                         {children}
-                    </WalletModalProvider>
-                </WalletProvider>
-            </ConnectionProvider>
+                </RpcContextProvider>
+                </SelectedWalletAccountContextProvider>
+            </ChainContextProvider>
     );
 };
 
 const App: FC<{ Component: FC<any>; pageProps: any }> = ({ Component, pageProps }) => {
-    const WalletMultiButtonDynamic = dynamic(
-        async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
-        { ssr: false }
-    );
+
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -88,15 +69,13 @@ const App: FC<{ Component: FC<any>; pageProps: any }> = ({ Component, pageProps 
                     <div className={styles.loadingSpinner}></div>
                 </div>
             )}
+            <Theme>
             <Context>
-            {/* <div style={{ position: 'fixed', top: 0, right: 0, zIndex: 1, margin: 12 }}>
-            <WalletMultiButtonDynamic />
-            </div> */}
                 <Navbar />
 
                 <Content Component={Component} pageProps={pageProps} />
             </Context>
-
+            </Theme>
         </>
 
     );

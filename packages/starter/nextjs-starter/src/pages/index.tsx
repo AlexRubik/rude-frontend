@@ -11,6 +11,10 @@ import { Connection, PublicKey } from '@solana/web3.js'
 import { delay, getSolBalance, getUTCTime } from '../utils';
 import { FaDiscord, FaGithub, FaYoutube, FaBook, FaXTwitter } from 'react-icons/fa6';
 import { FaExternalLinkAlt } from 'react-icons/fa';
+import { ConnectWalletMenu } from '../components/ConnectWalletMenu';
+import { WalletAccountIcon } from '../components/WalletAccountIcon';
+import { SelectedWalletAccountContext } from '../context/SelectedWalletAccountContext';
+import { SolanaSignAndSendTransactionFeaturePanel } from '../components/SolanaSignAndSendTransactionFeaturePanel';
 
 interface Item {
     id: number;
@@ -40,6 +44,7 @@ const Home: NextPage<HomeProps> = () => {
         const [isDropdownOpen, setIsDropdownOpen] = useState(false);
         const [isLpBotDropdownOpen, setIsLpBotDropdownOpen] = useState(false);
         const [logoLoaded, setLogoLoaded] = useState(false);
+        const [selectedWalletAccount] = useContext(SelectedWalletAccountContext);
         
 
 
@@ -103,6 +108,9 @@ const Home: NextPage<HomeProps> = () => {
                         onLoadingComplete={() => setLogoLoaded(true)}
                     />
                 </div>
+                        <p>{selectedWalletAccount?.address}</p>
+                {selectedWalletAccount && <SolanaSignAndSendTransactionFeaturePanel account={selectedWalletAccount} />}
+
 
                 <div className={styles.socialLinks}>
                     <a href="https://discord.gg/6DTGbMNYuA" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>

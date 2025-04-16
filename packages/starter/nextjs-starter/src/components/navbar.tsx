@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import styles from '../styles/Navbar.module.css';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import dynamic from 'next/dynamic';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { useRouter } from 'next/router';
+import { WalletAccountIcon } from './WalletAccountIcon';
+import { SelectedWalletAccountContext } from '../context/SelectedWalletAccountContext';
+import { ConnectWalletMenu } from './ConnectWalletMenu';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -11,10 +13,7 @@ const Navbar = () => {
     const navRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
     
-    const WalletMultiButtonDynamic = dynamic(
-        async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
-        { ssr: false }
-    );
+    
 
     // Close menu when clicking outside
     useEffect(() => {
@@ -96,15 +95,7 @@ const Navbar = () => {
             </div>
 
             <div className={styles.navbarRight}>
-              <WalletMultiButtonDynamic style={
-                { 
-                backgroundColor: '#d35033',
-                height: '40px',
-                fontSize: '14px'
-
-
-               }
-               }/>
+            <ConnectWalletMenu>Connect Wallet</ConnectWalletMenu>
             </div>
           </nav>
         </div>

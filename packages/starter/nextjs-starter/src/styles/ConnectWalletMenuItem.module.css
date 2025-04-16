@@ -1,0 +1,135 @@
+.menuItemContainer {
+    position: relative;
+    width: 100%;
+  }
+  
+  .menuItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .menuItem:hover {
+    background-color: #2a2a2a;
+  }
+  
+  .disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .walletInfo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .walletIcon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .walletName {
+    font-size: 14px;
+  }
+  
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .chevron {
+    font-size: 10px;
+  }
+  
+  .submenu {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    margin-left: 4px;
+    min-width: 180px;
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 101;
+  }
+  
+  .submenuLabel {
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #999;
+    font-weight: 500;
+  }
+  
+  .accountsList {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .accountItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+  }
+  
+  .accountItem:hover {
+    background-color: #2a2a2a;
+  }
+  
+  .selected {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .checkmark {
+    color: #4caf50;
+  }
+  
+  .submenuSeparator {
+    height: 1px;
+    background-color: #333;
+    margin: 4px 0;
+  }
+  
+  .submenuItem {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+  }
+  
+  .submenuItem:hover {
+    background-color: #2a2a2a;
+  }
+  
+  .disconnectItem {
+    color: #ff4d4d;
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .submenu {
+      left: auto;
+      right: 0;
+      top: 100%;
+      margin-left: 0;
+      margin-top: 4px;
+    }
+  }

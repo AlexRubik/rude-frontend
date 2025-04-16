@@ -3,7 +3,7 @@
     "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
     "compilerOptions": {
         "outDir": "lib",
-        "target": "es6",
+        "target": "es2020",
         "lib": ["dom", "dom.iterable", "esnext"],
         "allowJs": true,
         "skipLibCheck": true,
