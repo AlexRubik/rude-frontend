@@ -1,10 +1,8 @@
 import { Connection, Keypair, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { AnchorProvider, BN, Program } from '@coral-xyz/anchor';
 import NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet';
 import { IDL as ADRENA_IDL } from './adrena';
 import BigNumber from 'bignumber.js';
-import { AllStakingStats, UserStakingExtended } from './types';
 import fetch from 'node-fetch';
 
 // Define interfaces for the return data structure
