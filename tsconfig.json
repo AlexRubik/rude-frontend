@@ -1,9 +1,22 @@
 {
-    "extends": "./tsconfig.all.json",
-    "include": ["./packages/*/*/src", "./packages/*/*/package.json"],
+    "extends": "../../../tsconfig.root.json",
+    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
     "compilerOptions": {
-        "noEmit": true,
+        "outDir": "lib",
+        "target": "es6",
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "allowJs": true,
         "skipLibCheck": true,
-        "jsx": "react"
-    }
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noEmit": true,
+        "esModuleInterop": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "jsx": "preserve",
+        "incremental": true
+    },
+    "exclude": ["node_modules"]
 }

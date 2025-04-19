@@ -1,20 +1,39 @@
-.idea
-.vscode
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/.swc/
+/out/
+
+# production
+/build
+
+# misc
 .DS_Store
+*.pem
 
-node_modules
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-package-lock.json
-# yarn.lock
+# local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-.next
-.parcel-cache
-.swc
-build
-lib
-dist
-docs
-out
+# vercel
+.vercel
+
+# typescript
 *.tsbuildinfo
-
-.turbo
+/lib
