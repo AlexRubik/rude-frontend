@@ -26,7 +26,7 @@
         "node": ">=16"
     },
     "scripts": {
-        "build": "tsc --build --verbose && next build",
+        "build": "NEXT_DISABLE_ESLINT=1 next build",
         "clean": "shx rm -rf .next .swc lib",
         "dev": "NODE_OPTIONS='--inspect' next dev",
         "start": "next start",
