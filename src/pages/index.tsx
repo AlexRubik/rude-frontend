@@ -82,7 +82,7 @@ const Home: NextPage<HomeProps> = () => {
         <div className={styles.container}>
             <Head>
                 <title>Rude Labs</title>
-                <meta name="description" content="DeFi Suite on Solana." />
+                <meta name="description" content="DeFi Suite on Solana" />
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
@@ -120,7 +120,7 @@ const Home: NextPage<HomeProps> = () => {
                         className={styles.dropdownTitle}
                         onClick={() => setIsLpBotDropdownOpen(!isLpBotDropdownOpen)}
                     >
-                        LP Bot <span className={styles.comingSoon}>Coming Soon</span> {isLpBotDropdownOpen ? '▼' : '▶'}
+                        LP Bot <span className={styles.comingSoon}>Coming Soon</span>
                     </h2>
                     
                     <div className={styles.dropdownContent} style={{
@@ -141,7 +141,7 @@ const Home: NextPage<HomeProps> = () => {
                         className={styles.dropdownTitle}
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     >
-                        Arbitrage Bot {isDropdownOpen ? '▼' : '▶'}
+                        Arbitrage Bot <span className={styles.sunset}>Sunset 🌄</span>
                     </h2>
                     
                     <div className={styles.dropdownContent} style={{

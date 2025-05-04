@@ -79,9 +79,6 @@ const Navbar = () => {
               >
                 <h4 className={styles.link}>More</h4>
                 <div className={`${styles.dropdownContent} ${showDropdown ? styles.show : ''}`}>
-                  <Link href="/balances">
-                    <h4 className={styles.dropdownLink}>Balance Tracker</h4>
-                  </Link>
                   <Link href="/trading-calc">
                     <h4 className={styles.dropdownLink}>Trading Calc</h4>
                   </Link>

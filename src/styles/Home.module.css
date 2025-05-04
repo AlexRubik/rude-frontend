@@ -327,6 +327,18 @@
   font-weight: normal;
 }
 
+.sunset {
+
+  background-color: #ffde59;
+  color: #2d2d2d;
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  font-weight: normal;
+}
+
 .linkIcon {
   margin-right: 8px;
   vertical-align: middle;
