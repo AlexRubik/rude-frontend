@@ -83,7 +83,7 @@ const Home: NextPage<HomeProps> = () => {
             <Head>
                 <title>Rude Labs</title>
                 <meta name="description" content="DeFi Suite on Solana" />
-                <link rel="icon" href="/favicon.ico" />
+                <link rel="icon" href="/logoWithRing1.png" />
             </Head>
 
             <main className={styles.main}>
