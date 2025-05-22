@@ -78,6 +78,21 @@ const Home: NextPage<HomeProps> = () => {
 
             })();
         }, [pubkeyObj, triggerUseEffect]);
+
+    // Add a new useEffect to update the time every 40 seconds
+    useEffect(() => {
+        // Update time immediately when component mounts
+        setCurrentTime(getUTCTime());
+        
+        // Set up interval to update time every 40 seconds
+        const timeInterval = setInterval(() => {
+            setCurrentTime(getUTCTime());
+        }, 40000); // 40 seconds in milliseconds
+        
+        // Clean up interval on component unmount
+        return () => clearInterval(timeInterval);
+    }, []); // Empty dependency array means this runs once on mount
+
     return (
         <div className={styles.container}>
             <Head>
@@ -109,70 +124,18 @@ const Home: NextPage<HomeProps> = () => {
                         <FaDiscord className={styles.socialIcon} />
                         <span>Discord</span>
                     </a>
-                    <a href="https://x.com/RudeLabs_io" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+                    <a href="https://x.com/Trader_Hamilton" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
                         <FaXTwitter className={styles.socialIcon} />
                         <span>X</span>
                     </a>
+                    <a href="https://github.com/AlexRubik" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+                        <FaGithub className={styles.socialIcon} />
+                        <span>GitHub</span>
+                    </a>
                 </div>
 
-                <div className={styles.dropdownContainer}>
-                    <h2 
-                        className={styles.dropdownTitle}
-                        onClick={() => setIsLpBotDropdownOpen(!isLpBotDropdownOpen)}
-                    >
-                        LP Bot <span className={styles.comingSoon}>Coming Soon</span>
-                    </h2>
-                    
-                    <div className={styles.dropdownContent} style={{
-                        maxHeight: isLpBotDropdownOpen ? '500px' : '0',
-                        opacity: isLpBotDropdownOpen ? 1 : 0,
-                        padding: isLpBotDropdownOpen ? '1rem' : '0 1rem',
-                        marginTop: isLpBotDropdownOpen ? '0.5rem' : '0',
-                        overflow: 'hidden'
-                    }}>
-                        <a href="https://x.com/Trader_Hamilton" target="_blank" rel="noopener noreferrer">
-                            <h2><FaXTwitter className={styles.linkIcon} /> Lead Dev</h2>
-                        </a>
-                    </div>
-                </div>
 
-                <div className={styles.dropdownContainer}>
-                    <h2 
-                        className={styles.dropdownTitle}
-                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    >
-                        Arbitrage Bot <span className={styles.sunset}>Sunset 🌄</span>
-                    </h2>
-                    
-                    <div className={styles.dropdownContent} style={{
-                        maxHeight: isDropdownOpen ? '500px' : '0',
-                        opacity: isDropdownOpen ? 1 : 0,
-                        padding: isDropdownOpen ? '1rem' : '0 1rem',
-                        marginTop: isDropdownOpen ? '0.5rem' : '0',
-                        overflow: 'hidden'
-                    }}>
-                        <a href="https://www.youtube.com/playlist?list=PLMIFlNMah1MnCqDsEJ0P2QhDr93O9KYmF" target="_blank" rel="noopener noreferrer">
-                            <h2><FaYoutube className={styles.linkIcon} /> Beginner Video Tutorial</h2>
-                        </a>
-                        <a href="https://github.com/AlexRubik/rude-bot-solana" target="_blank" rel="noopener noreferrer">
-                            <h2><FaGithub className={styles.linkIcon} /> GitHub</h2>
-                        </a>
-                        <a href="https://rude-bot-org.gitbook.io/" target="_blank" rel="noopener noreferrer">
-                            <h2><FaBook className={styles.linkIcon} /> Documentation</h2>
-                        </a>
-                        <a href="/source-code">
-                            <h2><FaExternalLinkAlt className={styles.linkIcon} /> Purchase Source Code</h2>
-                        </a>
-                        <a href="https://solscan.io/account/3tZPEagumHvtgBhivFJCmhV9AyhBHGW9VgdsK52i4gwP" target="_blank" rel="noopener noreferrer">
-                            <h2><FaExternalLinkAlt className={styles.linkIcon} /> On Chain Program 1</h2>
-                        </a>
-                        <a href="https://solscan.io/account/72FXMcchZS4JRgQ62pKweYhHAkFA19PFoaqAUhWZmEFU" target="_blank" rel="noopener noreferrer">
-                            <h2><FaExternalLinkAlt className={styles.linkIcon} /> On Chain Program 2</h2>
-                        </a>
-                    </div>
-                </div>
-
-                <p>Time: {currentTime} UTC</p>
+                <p className={styles.rainbowText}>{currentTime} UTC</p>
                 <p hidden={!pubkeyObj}>SOL Balance: {solBalance}</p>
             </main>
         </div>

@@ -3,7 +3,7 @@
 }
 
 .main {
-  min-height: 100vh;
+  min-height: 80vh;
   padding: 4rem 0;
   flex: 1;
   display: flex;
@@ -412,4 +412,20 @@
 
 .logoContainer img {
   animation: float 3s ease-in-out infinite;
+}
+
+@keyframes rainbow {
+  0% { color: #ff0000; }
+  14% { color: #ff7f00; }
+  28% { color: #ffff00; }
+  42% { color: #00ff00; }
+  57% { color: #9292ff; }
+  71% { color: #a323ff; }
+  85% { color: #c136fc; }
+  100% { color: #ff0000; }
+}
+
+.rainbowText {
+  animation: rainbow 5s linear infinite;
+  font-weight: bold;
 }

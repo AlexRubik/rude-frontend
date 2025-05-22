@@ -28,7 +28,7 @@
     "scripts": {
         "build": "NEXT_DISABLE_ESLINT=1 next build",
         "clean": "shx rm -rf .next .swc lib",
-        "dev": "NODE_OPTIONS='--inspect' next dev",
+        "dev": "NODE_OPTIONS='--inspect' next dev -p 3001",
         "start": "next start",
         "lint": "prettier --check 'src/{*,**/*}.{ts,tsx,js,jsx,json}' && eslint && next lint"
     },

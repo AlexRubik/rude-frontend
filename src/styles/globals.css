@@ -52,3 +52,13 @@ h1, h2, h3, h4, h5, h6 {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.perk-frame {
+  width: 390px !important;  /* Reduced from 348px */
+  max-width: 390px !important;
+  opacity: 0.7 !important;
+  height: 330px !important;
+  max-height: 390px !important;
+}
+
+

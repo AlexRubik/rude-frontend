@@ -79,14 +79,19 @@ const Navbar = () => {
               >
                 <h4 className={styles.link}>More</h4>
                 <div className={`${styles.dropdownContent} ${showDropdown ? styles.show : ''}`}>
+
+
+                  <Link href="/sol-passive">
+                    <h4 className={styles.dropdownLink}>Passive Yield</h4>
+                  </Link>
+                  <Link href="/adrena">
+                    <h4 className={styles.dropdownLink}>Adrena Stats</h4>
+                  </Link>
                   <Link href="/trading-calc">
                     <h4 className={styles.dropdownLink}>Trading Calc</h4>
                   </Link>
                   <Link href="/pnl-dashboard">
                     <h4 className={styles.dropdownLink}>LP Stats Alpha</h4>
-                  </Link>
-                  <Link href="/adrena">
-                    <h4 className={styles.dropdownLink}>Adrena Stats</h4>
                   </Link>
                 </div>
               </div>
