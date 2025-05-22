@@ -34,6 +34,15 @@ const SolPassivePage: React.FC = () => {
             lockup: false
           },
           {
+            name: "Huma",
+            description: "Huma primarily generates yield from PayFi—real-world payment financing activities such as global settlement, card payments, trade finance",
+            xProfile: "https://x.com/humafinance",
+            website: "https://huma.finance/",
+            documentation: "https://docs.huma.finance/",
+            audited: true,
+            lockup: false
+          },
+          {
       name: "Elemental",
       description: "Fixed yield fund focusing on Delta Neutral Funding Rate Farming, Liquidity Pools, Lending Loops and Arbitrage",
       xProfile: "https://x.com/elementaldefi",
