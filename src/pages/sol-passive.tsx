@@ -26,7 +26,7 @@ const SolPassivePage: React.FC = () => {
           },
           {
             name: "Carrot",
-            description: "Automated yield aggregator for stablecoins",
+            description: "Yield bearing token where yield is earned through automated optimization algorithms that smart-routes stablecoin lending, ensuring that funds are continually rebalanced to capture the best rates.",
             xProfile: "https://x.com/deficarrot",
             website: "https://deficarrot.com/",
             documentation: "https://docs.deficarrot.com/",
