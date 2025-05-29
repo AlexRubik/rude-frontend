@@ -120,10 +120,10 @@ const Home: NextPage<HomeProps> = () => {
                 </div>
 
                 <div className={styles.socialLinks}>
-                    <a href="https://discord.gg/6DTGbMNYuA" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+                    {/* <a href="https://discord.gg/6DTGbMNYuA" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
                         <FaDiscord className={styles.socialIcon} />
                         <span>Discord</span>
-                    </a>
+                    </a> */}
                     <a href="https://x.com/Trader_Hamilton" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
                         <FaXTwitter className={styles.socialIcon} />
                         <span>X</span>
