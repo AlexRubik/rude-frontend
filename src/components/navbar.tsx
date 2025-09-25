@@ -63,9 +63,6 @@ const Navbar = () => {
               <Link href="/apy-dashboard">
                 <h4 className={styles.link}>APY Dashboard</h4>
               </Link>
-              <Link href="/lsts">
-                <h4 className={styles.link}>LSTs</h4>
-              </Link>
               <div 
                 className={styles.dropdown}
                 onMouseEnter={() => setShowDropdown(true)}
