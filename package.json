@@ -36,14 +36,14 @@
         "@coral-xyz/anchor": "0.29.0",
         "@iarna/toml": "^2.2.5",
         "@solana/spl-token": "0.4.9",
-        "@solana/wallet-adapter-base": "^0.9.23",
-        "@solana/wallet-adapter-react": "0.15.35",
-        "@solana/wallet-adapter-react-ui": "0.9.35",
-        "@solana/wallet-adapter-wallets": "0.19.32",
-        "@solana/web3.js": "1.95.3",
+        "@solana/wallet-adapter-base": "^0.9.27",
+        "@solana/wallet-adapter-react": "^0.15.39",
+        "@solana/wallet-adapter-react-ui": "^0.9.39",
+        "@solana/wallet-adapter-wallets": "^0.19.37",
+        "@solana/web3.js": "^1.98.0",
         "@types/pg": "^8.11.4",
         "bignumber.js": "9.1.2",
-        "next": "^12.3.7",
+        "next": "14.2.32",
         "node-fetch": "^3.3.2",
         "pg": "^8.11.3",
         "react": "^18.2.0",
@@ -54,13 +54,10 @@
         "@types/node-fetch": "^2.6.4",
         "@types/react": "^18.2.13",
         "@types/react-dom": "^18.2.6",
-        "eslint": "8.22.0",
-        "eslint-config-next": "^12.3.7",
+        "eslint": "^8.57.0",
+        "eslint-config-next": "14.2.32",
         "prettier": "^2.8.8",
         "shx": "^0.3.4",
         "typescript": "^5.4.5"
-    },
-    "resolutions": {
-        "@solana/web3.js": "1.73.0"
     }
 }
