@@ -30,7 +30,7 @@ export async function fetchAtaRecords(pubkey: string | undefined): Promise<AtaRe
   
   export async function insertNewAtaRecord(newAtaRecord: AtaRecord): Promise<InsertAtaResponse> {
     try {
-
+      // Validate input: check existence first to prevent TypeError before accessing properties
       if (!newAtaRecord || 
         newAtaRecord.pubkey.length < 43 || 
         newAtaRecord.pubkey.length > 45) {
