@@ -61,6 +61,7 @@
         "typescript": "^5.4.5"
     },
     "resolutions": {
-        "@solana/web3.js": "1.73.0"
+        "@solana/web3.js": "1.73.0",
+        "sha.js": "^2.4.12"
     }
 }
