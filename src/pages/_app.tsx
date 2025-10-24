@@ -35,7 +35,6 @@ const Context: FC<{ children: ReactNode }> = ({ children }) => {
             new SolflareWalletAdapter({ network }),
             new TorusWalletAdapter(),
             new LedgerWalletAdapter(),
-            new SolflareWalletAdapter({ network }),
         ],
         [network]
     );
