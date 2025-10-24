@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { NextPage, GetServerSideProps } from 'next';
 import styles from '../styles/Apy.module.css';
 import { fetchSanctumApys, calculateTop5Average } from '../utils';
+import { getProtocolApys } from '../db';
 import Head from 'next/head';
 
 type ApyData = {
@@ -334,31 +335,24 @@ const ApyDashboard: NextPage<DashboardProps> = ({ initialData }) => {
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/apyData`);
-    const initialData = await response.json();
+    // Call the database function directly instead of making an HTTP request
+    const { protocols, lastUpdateTime } = await getProtocolApys();
 
-    if (!initialData.success) {
-      console.log('API cache failed');
-      // Return empty because we can't import the db here because we dont want to expose env variables to the client
-      return {
-        props: {
-          initialData: {
-            data: [],
-            lastUpdateTime: null
-          }
-        }
-      };
-    }
-
-    return {
-      props: {
-        initialData
-      }
-    };
-  } catch (error) {
     return {
       props: {
         initialData: {
+          success: true,
+          data: protocols,
+          lastUpdateTime
+        }
+      }
+    };
+  } catch (error) {
+    console.error('Error in getServerSideProps:', error);
+    return {
+      props: {
+        initialData: {
+          success: false,
           data: [],
           lastUpdateTime: null
         }
