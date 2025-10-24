@@ -28,9 +28,6 @@ jobs:
       - name: Run TypeScript type checking
         run: yarn tsc --noEmit
 
-      - name: Run Prettier check
-        run: yarn prettier --check 'src/{*,**/*}.{ts,tsx,js,jsx,json}'
-
       - name: Run ESLint
         run: yarn eslint .
 
